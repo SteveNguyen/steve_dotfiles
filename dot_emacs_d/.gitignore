@@ -1,0 +1,10 @@
+anything-c-adaptive-history
+auto-save-list/
+auto-save-list/*
+savehist
+session.*
+.places
+backups/
+backups/*
+url/
+url/*

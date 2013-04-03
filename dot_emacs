@@ -1,4 +1,7 @@
 (setq visible-bell t)
+(fset 'yes-or-no-p 'y-or-n-p)
+
+
 
 ;; (let ((base "/home/steve/.emacs.d/"))
 ;;   (add-to-list 'load-path base)
@@ -140,6 +143,15 @@
 (setq google-translate-default-target-language "en")
 (setq google-translate-default-source-language "fr")
 (setq google-translate-enable-ido-completion t)
+
+
+
+;; magit, for git...
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/elpa/cl-lib-0.2/")
+(require 'cl-lib)
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/magit")
+(require 'magit)
+
 
 ;; indent
 
@@ -399,7 +411,7 @@
       )
 
 
-(fset 'yes-or-no-p 'y-or-n-p)
+
    
 (setq-default ispell-program-name "aspell")
 (setq ispell-local-dictionary "francais")
