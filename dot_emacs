@@ -53,7 +53,7 @@
 
 
 ;; ace jump mode major function
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/ace-jump-mode")
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/ace-jump-mode.el")
 (require 'ace-jump-mode)
 (autoload
   'ace-jump-mode
