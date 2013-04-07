@@ -176,7 +176,7 @@
 
 
 ;; multiple-cursors
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/multiple-cursors.el")
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/multiple-cursors")
 (require 'multiple-cursors)
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -213,12 +213,12 @@
 
 
 ;; minimap
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/minimap")
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-minimap")
 (require 'minimap)
 
 
 ;; expend-region
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/expand-region.el")
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/expand-region")
 (require 'expand-region)
 (global-set-key (kbd "C-=") 'er/expand-region)
 
