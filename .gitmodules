@@ -1,0 +1,12 @@
+[submodule "dot_emacs_d/site-lisp/ace-jump-mode"]
+	path = dot_emacs_d/site_lisp/ace-jump-mode
+	url = https://github.com/winterTTr/ace-jump-mode.git
+[submodule "dot_emacs_d/site-lisp/multiple-cursors"]
+	path = dot_emacs_d/site-lisp/multiple-cursors
+	url = https://github.com/emacsmirror/multiple-cursors.git
+[submodule "dot_emacs_d/site-lisp/minimap"]
+	path = dot_emacs_d/site-lisp/minimap
+	url = https://github.com/dustinlacewell/emacs-minimap.git
+[submodule "dot_emacs_d/site-lisp/expand-region.el"]
+	path = dot_emacs_d/site-lisp/expand-region.el
+	url = https://github.com/magnars/expand-region.el.git
