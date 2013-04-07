@@ -1,5 +1,5 @@
-[submodule "dot_emacs_d/site-lisp/ace-jump-mode"]
-	path = dot_emacs_d/site_lisp/ace-jump-mode
+[submodule "dot_emacs_d/site-lisp/ace-jump-mode.el"]
+	path = dot_emacs_d/site-lisp/ace-jump-mode.el
 	url = https://github.com/winterTTr/ace-jump-mode.git
 [submodule "dot_emacs_d/site-lisp/multiple-cursors"]
 	path = dot_emacs_d/site-lisp/multiple-cursors
