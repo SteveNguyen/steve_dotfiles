@@ -24,8 +24,21 @@
 
 
 ;; Comment/uncomment block
-(global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
+(defun comment-or-uncomment-region-or-line ()
+    "Comments or uncomments the region or the current line if there's no active region."
+    (interactive)
+    (let (beg end)
+        (if (region-active-p)
+            (setq beg (region-beginning) end (region-end))
+            (setq beg (line-beginning-position) end (line-end-position)))
+        (comment-or-uncomment-region beg end)))
+
+;; (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
+;; (global-set-key (kbd "C-c u") 'uncomment-region)
+
+(global-set-key (kbd "C-c c") 'comment-or-uncomment-region-or-line)
 (global-set-key (kbd "C-c u") 'uncomment-region)
+
 
 
 ;; Browse the kill ring
@@ -404,10 +417,14 @@
         ("\\.shtml$" . html-mode)
 	("\\.php3$" . html-mode)
 	("\\.phtml$" . html-mode)
+	("\\.css$" . css-mode)
 	("\\.vhdl$" . vhdl-mode)
 	("\\.vhd$" . vhdl-mode)
         ("M?[Mm]akefile$" . makefile-mode)
-        ("\\.mk$" . makefile-mode))
+        ("\\.mk$" . makefile-mode)
+	("\\.org$" . org-mode)
+	("\\.bib$" . bibtex-mode)
+	)
       )
 
 
