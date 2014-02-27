@@ -1,6 +1,41 @@
 (setq visible-bell t)
 (fset 'yes-or-no-p 'y-or-n-p)
 
+(setq initial-scratch-message "
+      Small cheatsheet:
+      C-c C-space : Ace jump
+      C-x C-space : Ace pop back
+
+      C-c m : compile
+
+      C-! : Hippie expand
+      C-: :
+      C-; : expand line
+
+      C-c t : google-translate
+      C-c r : reverse translate
+
+      C-c i : indent
+
+      C-> : multiple cursor
+      C-< :
+
+      C-= : expend selection region
+
+      C-* : ispell word      
+      ")
+
+
+
+
+
+
+;; marmalade package repo
+(require 'package)
+(add-to-list 'package-archives 
+    '("marmalade" .
+      "http://marmalade-repo.org/packages/"))
+(package-initialize)
 
 
 ;; (let ((base "/home/steve/.emacs.d/"))
@@ -45,9 +80,13 @@
 (global-set-key (kbd "C-x C-y") 'browse-kill-ring)
 
 ;; tab completion. Sometimes...
-(setq tab-always-indent 'complete)
-(add-to-list 'completion-styles 'initials t)
+;; (setq tab-always-indent 'complete)
+;; (add-to-list 'completion-styles 'initials t)
 
+
+;; auto-complete
+(require 'auto-complete)
+(global-auto-complete-mode t)
 
 ;; Save point position between sessions
 (require 'saveplace)
@@ -308,6 +347,19 @@
                       (setq indent-tabs-mode nil
                             tab-width 4))))
 
+
+;; Jedi python completion
+;; (setq jedi:setup-keys t)
+;; (add-hook 'python-mode-hook 'jedi:setup)
+
+(require 'epc)
+(setq jedi:setup-keys t)
+(setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi-0.1.2/jediepcserver.py"))
+(setq jedi:tooltip-method '(pos-tip))
+(autoload 'jedi:setup "jedi" nil t)
+(add-hook 'python-mode-hook 'jedi:setup)
+
+
 ;; (require 'anything-config)
 ;; (require 'lacarte)
 
@@ -382,9 +434,9 @@
 ;; utf-8
 ;;
 
-;;(setq locale-coding-system 'utf-8)
-;;(set-selection-coding-system 'utf-8)
-;;(prefer-coding-system 'utf-8)
+(setq locale-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
 
 
 (setq x-super-keysym 'meta)  ;;touche windows en meta
@@ -653,13 +705,13 @@
 ;;   (save-buffer)
 ;;   (shell-command (concat "tmake -o Makefile " buffer-file-name)))
 
-(setq selection-coding-system 'compound-text-with-extensions)
-;;(standard-display-european 1) (set-input-mode nil nil 1)
+;; (setq selection-coding-system 'compound-text-with-extensions)
+;; ;;(standard-display-european 1) (set-input-mode nil nil 1)
 
-(set-terminal-coding-system 'latin-1)
-(set-keyboard-coding-system 'latin-1)
-(set-language-environment 'latin-1)
-(setq current-language-environment "French")
+;; (set-terminal-coding-system 'latin-1)
+;; (set-keyboard-coding-system 'latin-1)
+;; (set-language-environment 'latin-1)
+;; (setq current-language-environment "French")
 
 
 (defconst my-c-style
@@ -821,6 +873,9 @@
 ;;  (require 'ecb-autoloads)
 ;; ;; CEDET with emacs23
 
+
+;; bugfix for emacs24
+(setq stack-trace-on-error t)
 
 ;; (add-to-list 'load-path
 ;;                      "/home/steve/.emacs.d/site-lisp/cedet-1.1/semantic")
