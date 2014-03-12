@@ -22,17 +22,24 @@
 
       C-= : expend selection region
 
-      C-* : ispell word      
+      C-* : ispell word
       ")
 
 
 
+;; highlight current line
+(global-hl-line-mode +1)
+(set-face-background 'hl-line "#333")
 
+;; line number at left?
+(global-linum-mode t)
 
+;; just remove the trailing whitespaces when saving
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; marmalade package repo
 (require 'package)
-(add-to-list 'package-archives 
+(add-to-list 'package-archives
     '("marmalade" .
       "http://marmalade-repo.org/packages/"))
 (package-initialize)
@@ -42,7 +49,7 @@
 ;;   (add-to-list 'load-path base)
 ;;   (dolist (f (directory-files base))
 ;;     (let ((name (concat base "/" f)))
-;;       (when (and (file-directory-p name) 
+;;       (when (and (file-directory-p name)
 ;;                  (not (equal f ".."))
 ;;                  (not (equal f ".")))
 ;;         (add-to-list 'load-path name)))))
@@ -80,8 +87,8 @@
 (global-set-key (kbd "C-x C-y") 'browse-kill-ring)
 
 ;; tab completion. Sometimes...
-;; (setq tab-always-indent 'complete)
-;; (add-to-list 'completion-styles 'initials t)
+(setq tab-always-indent 'complete)
+(add-to-list 'completion-styles 'initials t)
 
 
 ;; auto-complete
@@ -226,6 +233,25 @@
 
 (global-set-key (kbd "C-c i") 'indent-region-or-buffer)
 
+;; highlight indentation
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/Highlight-Indentation-for-Emacs")
+(require 'highlight-indentation)
+;; (set-face-background 'highlight-indentation-face "#696969")
+;; (set-face-background 'highlight-indentation-current-column-face "#a9a9a9")
+(set-face-background 'highlight-indentation-face "#2f4f4f")
+(set-face-background 'highlight-indentation-current-column-face "#708090")
+(add-hook 'python-mode-hook 'highlight-indentation-mode)
+(add-hook 'python-mode-hook 'highlight-indentation-current-column-mode)
+
+;;pas mal
+;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/indent-hint")
+;; (require 'visual-indentation-mode)
+
+
+;; ibuffer, can be usefull
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
+(setq ibuffer-default-sorting-mode 'major-mode)
 
 ;; multiple-cursors
 (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/multiple-cursors")
@@ -279,7 +305,7 @@
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
 (setq TeX-save-query nil)
-(setq-default TeX-master nil) 
+(setq-default TeX-master nil)
 (setq TeX-PDF-mode t) ;pdflatex
 
 (add-hook 'LaTeX-mode-hook 'visual-line-mode) ;or auto-fill-mode ?
@@ -288,7 +314,7 @@
 
 ;reftex
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-(setq reftex-plug-into-AUCTeX t)	
+(setq reftex-plug-into-AUCTeX t)
 ;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; with AUCTeX LaTeX mode
 (add-hook 'reftex-load-hook 'imenu-add-menubar-index)
 (add-hook 'reftex-mode-hook 'imenu-add-menubar-index)
@@ -414,7 +440,7 @@
 
 ;; (autoload 'say-minor-mode "festival" "Menu for using Festival." t)
 ;; (say-minor-mode t)
-;; (setq auto-mode-alist 
+;; (setq auto-mode-alist
 ;;       (append '(("\\.festivalrc$" . scheme-mode)) auto-mode-alist))
 
 ;; (require 'gtranslate)
@@ -442,25 +468,25 @@
 (setq x-super-keysym 'meta)  ;;touche windows en meta
 
 (setq auto-mode-alist
-      '( 
+      '(
 	("\\.txt$" . text-mode)
 	("\\.sgml$" . sgml-mode)
-        ("\\.C$"  . c++-mode) 
-        ("\\.cc$" . c++-mode) 
-	("\\.hh$" . c++-mode) 
-	("\\.cpp$" . c++-mode) 
-	("\\.cxx$" . c++-mode) 
-	("\\.hpp$" . c++-mode) 
-        ("\\.c$"  . c-mode) 
+        ("\\.C$"  . c++-mode)
+        ("\\.cc$" . c++-mode)
+	("\\.hh$" . c++-mode)
+	("\\.cpp$" . c++-mode)
+	("\\.cxx$" . c++-mode)
+	("\\.hpp$" . c++-mode)
+        ("\\.c$"  . c-mode)
         ("\\.h$"  . c-mode)
 	("\\.py$" . python-mode)
-        ("\\.el$" . emacs-lisp-mode) 
-        ("\\.emacs$" . emacs-lisp-mode) 
-        ("\\.gnus$" . emacs-lisp-mode) 
-        ("\\.scm$" . scheme-mode) 
-        ("\\.l$" . lisp-mode) 
-        ("\\.lisp$" . lisp-mode) 
-        ("\\.f$" . fortran-mode) 
+        ("\\.el$" . emacs-lisp-mode)
+        ("\\.emacs$" . emacs-lisp-mode)
+        ("\\.gnus$" . emacs-lisp-mode)
+        ("\\.scm$" . scheme-mode)
+        ("\\.l$" . lisp-mode)
+        ("\\.lisp$" . lisp-mode)
+        ("\\.f$" . fortran-mode)
         ("\\.awk$" . awk-mode )
 	("\\.pl$" . perl-mode )
         ("\\.tex$" . latex-mode )
@@ -481,7 +507,7 @@
 
 
 
-   
+
 (setq-default ispell-program-name "aspell")
 (setq ispell-local-dictionary "francais")
 ;; Pour que F2 lance flyspell
@@ -492,10 +518,10 @@
 
 ;; (setq ispell-dictionary "francais")
 ;; (require 'ispell)
-;; (add-hook 'text-mode-hook 
+;; (add-hook 'text-mode-hook
 ;; 	  '(lambda () (ispell-minor-mode 1) ))
 ;; (ispell-change-dictionary "francais")
-       
+
 
 ;;       (autoload 'ispell-word "ispell"
 ;;          "Check the spelling of word in buffer." t)
@@ -584,7 +610,7 @@
 	(insert-today)
 	))
     )
-  
+
 
 
 )
@@ -639,7 +665,7 @@
 
 
 
-;; if you create a file called Test.hpp, this function will replace: 
+;; if you create a file called Test.hpp, this function will replace:
 ;; @@@ with TEST and ||| with Test
 
 
@@ -735,10 +761,10 @@
     (c-echo-syntactic-information-p . t)
     )
   "My C Programming Style")
-     
+
 ;; offset customizations not in my-c-style
 (setq c-offsets-alist '((member-init-intro . ++)))
-     
+
 ;; Customizations for all modes in CC Mode.
 (defun my-c-mode-common-hook ()
   ;; add my personal style and set it for the current buffer
@@ -754,16 +780,16 @@
   ;; java-mode-map, idl-mode-map, and pike-mode-map inherit from it.
   (define-key c-mode-base-map "\C-m" 'c-context-line-break)
   )
-     
+
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 
 
 (add-hook 'c-mode-hook '(lambda ()
 			  (c-toggle-auto-hungry-state t)))
 
-					;(transient-mark-mode t) 
+					;(transient-mark-mode t)
 
-(add-hook 'text-mode-hook 'turn-on-auto-fill) 
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 
 					; # Mise en Couleur
@@ -933,7 +959,7 @@
 ;; ;;(global-ede-mode t)
 ;; ;;(semantic-load-enable-excessive-code-helpers)
 
-;; ;; ;;(semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion 
+;; ;; ;;(semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion
 ;; ;; (require 'semantic-ia)          ; names completion and display of tags
 ;; ;; (require 'semantic-gcc)         ; auto locate system include files
 ;; ;; (require 'semanticdb)
@@ -993,7 +1019,7 @@
 ;; ;; semantic
 
 ;; (global-ede-mode 1)                      ; Enable the Project management system
-;; ;;(semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion 
+;; ;;(semantic-load-enable-code-helpers)      ; Enable prototype help and smart completion
 ;; (semantic-load-enable-minimum-features)
 
 ;; (setq semantic-idle-scheduler-idle-time 600)

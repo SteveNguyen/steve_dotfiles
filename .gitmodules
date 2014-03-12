@@ -10,3 +10,8 @@
 [submodule "dot_emacs_d/site-lisp/expand-region"]
 	path = dot_emacs_d/site-lisp/expand-region
 	url = https://github.com/magnars/expand-region.el.git
+
+
+[submodule "dot_emacs_d/site-lisp/Highlight-Indentation-for-Emacs"]
+	path = dot_emacs_d/site-lisp/Highlight-Indentation-for-Emacs
+	url = https://github.com/antonj/Highlight-Indentation-for-Emacs.git
