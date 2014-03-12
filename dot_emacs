@@ -251,7 +251,7 @@
 (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/smart-operator")
 (require 'smart-operator)
 (add-hook 'python-mode-hook 'smart-operator-mode)
-(add-hook c-mode-hook 'smart-operator-mode)
+
 
 ;; ibuffer, can be usefull
 (require 'ibuffer)
