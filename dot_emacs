@@ -137,7 +137,6 @@
 (setq tab-always-indent 'complete)
 (add-to-list 'completion-styles 'initials t)
 
-
 ;; auto-complete
 (require 'auto-complete)
 (global-auto-complete-mode t)
