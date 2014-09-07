@@ -35,9 +35,16 @@
           q : quit
         C-q : abort
 
+      M-left : navigate between tabs
+      M-right :
+
       ")
 
+;; hide toolbar
+(tool-bar-mode -1)
 
+;; zone: screensaver 10min
+(setq zone-timer (run-with-idle-timer 600 t 'zone))
 
 ;; highlight current line
 (global-hl-line-mode +1)
@@ -105,6 +112,25 @@
 (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/undo-tree")
 (require 'undo-tree)
 (global-undo-tree-mode)
+
+
+;; tabbar
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/tabbar")
+(require 'tabbar)
+(global-set-key [M-left] 'tabbar-backward-tab)
+(global-set-key [M-right] 'tabbar-forward-tab)
+
+;; tabbar/ruler
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/tabbar-ruler.el")
+(setq tabbar-ruler-global-tabbar t) ; If you want tabbar
+;; (setq tabbar-ruler-global-ruler t) ; if you want a global ruler
+;; (setq tabbar-ruler-popup-menu t) ; If you want a popup menu.
+;; (setq tabbar-ruler-popup-toolbar t) ; If you want a popup toolbar
+;; (setq tabbar-ruler-popup-scrollbar t) ; If you want to only show the
+                                      ; scroll bar when your mouse is moving.
+(require 'tabbar-ruler)
+
+
 
 
 ;; tab completion. Sometimes...
@@ -367,6 +393,16 @@ ad-do-it))))
 (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-minimap")
 (require 'minimap)
 
+;; other minimap (sublimity)
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/sublimity")
+(require 'sublimity)
+;; (require 'sublimity-scroll)
+(require 'sublimity-map)
+;; (require 'sublimity-attractive)
+(sublimity-map-set-delay nil)
+;; (setq sublimity-scroll-weight 10
+;;       sublimity-scroll-drift-length 5)
+
 
 ;; expend-region
 (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/expand-region")
@@ -408,7 +444,6 @@ ad-do-it))))
 (add-hook 'LaTeX-mode-hook 'turn-on-outline-minor-mode)
 (add-hook 'latex-mode-hook 'turn-on-outline-minor-mode)
 (setq outline-minor-mode-prefix "\C-c \C-o") ; Or something else
-
 
 
 ;; Okular
