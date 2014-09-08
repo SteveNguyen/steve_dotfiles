@@ -44,7 +44,7 @@
 (tool-bar-mode -1)
 
 ;; zone: screensaver 10min
-(setq zone-timer (run-with-idle-timer 600 t 'zone))
+;; (setq zone-timer (run-with-idle-timer 600 t 'zone))
 
 ;; highlight current line
 (global-hl-line-mode +1)
