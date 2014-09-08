@@ -10,8 +10,15 @@
 [submodule "dot_emacs_d/site-lisp/expand-region"]
 	path = dot_emacs_d/site-lisp/expand-region
 	url = https://github.com/magnars/expand-region.el.git
-
-
 [submodule "dot_emacs_d/site-lisp/Highlight-Indentation-for-Emacs"]
 	path = dot_emacs_d/site-lisp/Highlight-Indentation-for-Emacs
 	url = https://github.com/antonj/Highlight-Indentation-for-Emacs.git
+[submodule "dot_emacs_d/site-lisp/sublimity"]
+	path = dot_emacs_d/site-lisp/sublimity
+	url = https://github.com/zk-phi/sublimity.git
+[submodule "dot_emacs_d/site-lisp/tabbar"]
+	path = dot_emacs_d/site-lisp/tabbar
+	url = https://github.com/dholm/tabbar.git
+[submodule "dot_emacs_d/site-lisp/tabbar-ruler.el"]
+	path = dot_emacs_d/site-lisp/tabbar-ruler.el
+	url = https://github.com/mlf176f2/tabbar-ruler.el.git
