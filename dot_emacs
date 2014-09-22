@@ -574,6 +574,12 @@ ad-do-it))))
 
 (setq x-super-keysym 'meta)  ;;touche windows en meta
 
+
+;; web mode
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/web-mode")
+(require 'web-mode)
+(add-to-list 'ac-modes 'web-mode)
+
 (setq auto-mode-alist
       '(
 	("\\.txt$" . text-mode)
@@ -598,11 +604,12 @@ ad-do-it))))
 	("\\.pl$" . perl-mode )
         ("\\.tex$" . latex-mode )
         ("\\.sh$" . sh-mode )
-        ("\\.html$" . html-mode)
-        ("\\.shtml$" . html-mode)
-	("\\.php3$" . html-mode)
-	("\\.phtml$" . html-mode)
-	("\\.css$" . css-mode)
+        ("\\.html$" . web-mode)
+        ("\\.shtml$" . web-mode)
+	("\\.php3$" . web-mode)
+	("\\.phtml$" . web-mode)
+	("\\.css$" . web-mode)
+	("\\.js$" . web-mode)
 	("\\.vhdl$" . vhdl-mode)
 	("\\.vhd$" . vhdl-mode)
         ("M?[Mm]akefile$" . makefile-mode)
