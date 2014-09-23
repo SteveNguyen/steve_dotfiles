@@ -305,11 +305,6 @@
 ;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/indent-hint")
 ;; (require 'visual-indentation-mode)
 
-;; smart operator, adding spaces between operators
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/smart-operator")
-(require 'smart-operator)
-(add-hook 'python-mode-hook 'smart-operator-mode)
-
 
 ;; ibuffer, can be usefull
 (require 'ibuffer)
@@ -486,11 +481,20 @@ ad-do-it))))
 '(LaTeX-command "latex -synctex=1")
 '(TeX-output-view-style '(("^pdf$" "." "okular %s.pdf")))
 
+
+
 ;; Python Hook
 (add-hook 'python-mode-hook
           (function (lambda ()
                       (setq indent-tabs-mode nil
                             tab-width 4))))
+
+
+;; smart operator, adding spaces between operators for python
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/smart-operator")
+(require 'smart-operator)
+(add-hook 'python-mode-hook 'smart-operator-mode)
+
 
 ;; Jedi python completion
 ;; (setq jedi:setup-keys t)
@@ -503,6 +507,48 @@ ad-do-it))))
 (autoload 'jedi:setup "jedi" nil t)
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
+
+
+;; Configure flymake with pylint for Python
+ ;; (when (load "flymake" t)
+ ;;      (defun flymake-pylint-init ()
+ ;;        (let* ((temp-file (flymake-init-create-temp-buffer-copy
+ ;;                           'flymake-create-temp-inplace))
+ ;;           (local-file (file-relative-name
+ ;;                        temp-file
+ ;;                        (file-name-directory buffer-file-name))))
+ ;;          (list "epylint" (list local-file))))
+ ;;          (add-to-list 'flymake-allowed-file-name-masks
+ ;; 		       '("\\.py\\'" flymake-pylint-init)))
+
+
+;; configure flymake with pep8 for python
+;; (when (load "flymake" t)
+;;  (defun flymake-pylint-init ()
+;;    (let* ((temp-file (flymake-init-create-temp-buffer-copy
+;;                       'flymake-create-temp-inplace))
+;;           (local-file (file-relative-name
+;;                        temp-file
+;;                        (file-name-directory buffer-file-name))))
+;;          (list "pep8" (list "--repeat" local-file))))
+
+;;  (add-to-list 'flymake-allowed-file-name-masks
+;;               '("\\.py\\'" flymake-pylint-init)))
+
+;; (defun my-flymake-show-help ()
+;;   (when (get-char-property (point) 'flymake-overlay)
+;;     (let ((help (get-char-property (point) 'help-echo)))
+;;       (if help (message "%s" help)))))
+
+;; (add-hook 'post-command-hook 'my-flymake-show-help)
+
+;; Set as a minor mode for Python
+;; (add-hook 'python-mode-hook '(lambda () (flymake-mode)))
+
+
+;;auto pep8 M-x package-install py-autopep8 (sudo pip install pep8 autopep8)
+(require 'py-autopep8)
+(add-hook 'before-save-hook 'py-autopep8-before-save)
 
 ;;ein ipython notebook
 ;;M-x package-install websocket
