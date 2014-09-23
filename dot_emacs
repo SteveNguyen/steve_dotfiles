@@ -44,7 +44,7 @@
 (tool-bar-mode -1)
 
 ;; zone: screensaver 10min
-(setq zone-timer (run-with-idle-timer 600 t 'zone))
+;; (setq zone-timer (run-with-idle-timer 600 t 'zone))
 
 ;; highlight current line
 (global-hl-line-mode +1)
@@ -64,6 +64,13 @@
 (add-to-list 'package-archives
     '("marmalade" .
       "http://marmalade-repo.org/packages/"))
+
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(when (< emacs-major-version 24)
+  ;; For important compatibility libraries like cl-lib
+  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+
 (package-initialize)
 
 
@@ -130,7 +137,12 @@
                                       ; scroll bar when your mouse is moving.
 (require 'tabbar-ruler)
 
-
+;; indication of the 70 char colum
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/fill-column-indicator")
+(require 'fill-column-indicator)
+;; (define-globalized-minor-mode
+;;  global-fci-mode fci-mode (lambda () (fci-mode 1)))
+;; (global-fci-mode t)
 
 
 ;; tab completion. Sometimes...
@@ -480,7 +492,6 @@ ad-do-it))))
                       (setq indent-tabs-mode nil
                             tab-width 4))))
 
-
 ;; Jedi python completion
 ;; (setq jedi:setup-keys t)
 ;; (add-hook 'python-mode-hook 'jedi:setup)
@@ -491,7 +502,20 @@ ad-do-it))))
 (setq jedi:tooltip-method '(pos-tip))
 (autoload 'jedi:setup "jedi" nil t)
 (add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t)
 
+;;ein ipython notebook
+;;M-x package-install websocket
+;;M-x package-install request
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-websocket")
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-request")
+(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-ipython-notebook/")
+(require 'websocket)
+(require 'request)
+(require 'ein)
+(add-hook 'ein:connect-mode-hook 'ein:jedi-setup)
+;; (setq ein:use-auto-complete t)
+;; (setq ein:use-auto-complete-superpack t)
 
 ;; (require 'anything-config)
 ;; (require 'lacarte)

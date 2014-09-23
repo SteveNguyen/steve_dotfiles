@@ -25,3 +25,6 @@
 [submodule "dot_emacs_d/site-lisp/emacs-request"]
 	path = dot_emacs_d/site-lisp/emacs-request
 	url = https://github.com/tkf/emacs-request.git
+[submodule "dot_emacs_d/site-lisp/emacs-websocket"]
+	path = dot_emacs_d/site-lisp/emacs-websocket
+	url = https://github.com/weissjeffm/emacs-websocket.git
