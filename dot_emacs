@@ -112,7 +112,8 @@
 
 
 
-;; Browse the kill ring
+;; Browse the kill ring+ M-x package install browse-kill-ring+
+(require 'browse-kill-ring+)
 (global-set-key (kbd "C-x C-y") 'browse-kill-ring)
 
 ;; undo tree
@@ -426,6 +427,8 @@ ad-do-it))))
 (add-hook 'LaTeX-mode-hook 'visual-line-mode) ;or auto-fill-mode ?
 (add-hook 'LaTeX-mode-hook 'flyspell-mode)
 (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
+(add-hook 'LaTeX-mode-hook 'ac-latex-mode-setup)
+(ac-flyspell-workaround)
 
 ;reftex
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
