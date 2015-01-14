@@ -514,11 +514,14 @@ ad-do-it))))
 
 (require 'epc)
 (setq jedi:setup-keys t)
-(setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi-0.1.2/jediepcserver.py"))
-(setq jedi:tooltip-method '(pos-tip))
 (autoload 'jedi:setup "jedi" nil t)
+;; (add-hook 'python-mode-hook 'auto-complete-mode)
 (add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:key-complete (kbd "<C-tab>"))
 (setq jedi:complete-on-dot t)
+
+(setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi/jediepcserver.py"))
+(setq jedi:tooltip-method '(pos-tip))
 
 
 ;; Configure flymake with pylint for Python
@@ -565,13 +568,15 @@ ad-do-it))))
 ;;ein ipython notebook
 ;;M-x package-install websocket
 ;;M-x package-install request
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-websocket")
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-request")
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-ipython-notebook/")
-(require 'websocket)
-(require 'request)
-(require 'ein)
-(add-hook 'ein:connect-mode-hook 'ein:jedi-setup)
+
+;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-websocket")
+;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-request")
+;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-ipython-notebook/")
+;; (require 'websocket)
+;; (require 'request)
+;; (require 'ein)
+;; (add-hook 'ein:connect-mode-hook 'ein:jedi-setup)
+
 ;; (setq ein:use-auto-complete t)
 ;; (setq ein:use-auto-complete-superpack t)
 
