@@ -46,9 +46,9 @@
 ;; zone: screensaver 10min
 ;; (setq zone-timer (run-with-idle-timer 600 t 'zone))
 
-;; highlight current line
-(global-hl-line-mode +1)
-(set-face-background 'hl-line "#333")
+;; highlight current line (fucked in terminal???)
+(if window-system (global-hl-line-mode 1))
+(if window-system (set-face-background 'hl-line "#333"))
 
 ;;show in which function we are
 (which-func-mode 1)
@@ -416,6 +416,15 @@ ad-do-it))))
 (require 'expand-region)
 (global-set-key (kbd "C-=") 'er/expand-region)
 
+
+;; org-mode
+(require 'org-install)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+(setq org-agenda-files (list "~/pulse/Sync/Org/todo.org"))
+
+
 ;; LATEX
 
 (setq TeX-auto-save t)
@@ -505,11 +514,14 @@ ad-do-it))))
 
 (require 'epc)
 (setq jedi:setup-keys t)
-(setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi-0.1.2/jediepcserver.py"))
-(setq jedi:tooltip-method '(pos-tip))
 (autoload 'jedi:setup "jedi" nil t)
+;; (add-hook 'python-mode-hook 'auto-complete-mode)
 (add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:key-complete (kbd "<C-tab>"))
 (setq jedi:complete-on-dot t)
+
+(setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi/jediepcserver.py"))
+(setq jedi:tooltip-method '(pos-tip))
 
 
 ;; Configure flymake with pylint for Python
@@ -556,13 +568,15 @@ ad-do-it))))
 ;;ein ipython notebook
 ;;M-x package-install websocket
 ;;M-x package-install request
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-websocket")
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-request")
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-ipython-notebook/")
-(require 'websocket)
-(require 'request)
-(require 'ein)
-(add-hook 'ein:connect-mode-hook 'ein:jedi-setup)
+
+;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-websocket")
+;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-request")
+;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-ipython-notebook/")
+;; (require 'websocket)
+;; (require 'request)
+;; (require 'ein)
+;; (add-hook 'ein:connect-mode-hook 'ein:jedi-setup)
+
 ;; (setq ein:use-auto-complete t)
 ;; (setq ein:use-auto-complete-superpack t)
 
