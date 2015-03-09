@@ -50,8 +50,8 @@
 (if window-system (global-hl-line-mode 1))
 (if window-system (set-face-background 'hl-line "#333"))
 
-;;show in which function we are
-(which-func-mode 1)
+;;show in which function we are (tends to freeze with python)
+;; (which-func-mode 1)
 
 ;; line number at left?
 (global-linum-mode t)
@@ -1062,7 +1062,7 @@ ad-do-it))))
 
 					; # retour a la ligne auto
 (setq default-major-mode 'text-mode)
-;(add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'text-mode-hook 'turn-off-auto-fill)
 
 					; # Scrolling verticale
 					;(setq-default scroll-conservatively 5)
