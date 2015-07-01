@@ -23,7 +23,7 @@ ZSH_THEME="robbyrussell"
 # DISABLE_AUTO_TITLE="true"
 
 # Uncomment the following line to enable command auto-correction.
-ENABLE_CORRECTION="true"
+# ENABLE_CORRECTION="true"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
 COMPLETION_WAITING_DOTS="true"
@@ -112,12 +112,16 @@ alias zz='fasd_cd -d -i' # cd with interactive selection
 #disable the shared history between terminals
 unsetopt share_history
 
+#stupid makerware
+alias makerware="env LC_ALL=\"en_US.UTF-8\" makerware"
+
 #VREP_STUFF
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/steve/divers/VREP/V-REP_PRO_EDU_V3_1_3_rev2b_64_Linux"
 source /opt/ros/indigo/setup.zsh
 source /home/steve/Project/DEV/catkin_ws/devel/setup.zsh
 
+export ROS_IP=`hostname -I`
 export ROS_MASTER_URI=http://rosban.local:11311/
 
 #BVS STUFFS
