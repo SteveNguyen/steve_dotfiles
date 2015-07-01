@@ -33,6 +33,12 @@
       S-up : navigate through markers
       S-down :
 
+      C-a : go to begining of line
+      C-e
+
+      S-enter : indent insert new line below
+      C-S-enter
+
       C-x u : undo-tree
           q : quit
         C-q : abort
@@ -59,8 +65,8 @@
 (if window-system (global-hl-line-mode 1))
 (if window-system (set-face-background 'hl-line "#333"))
 
-;;show in which function we are
-(which-func-mode 1)
+;;show in which function we are (tends to freeze with python)
+;; (which-func-mode 1)
 
 ;; line number at left?
 (global-linum-mode t)
@@ -234,6 +240,27 @@
 (eval-after-load "ace-jump-mode"
   '(ace-jump-mode-enable-mark-sync))
 (global-set-key (kbd "C-x C-SPC") 'ace-jump-mode-pop-mark)
+
+(defun smart-open-line ()
+  "Insert an empty line after the current line.
+Position the cursor at its beginning, according to the current mode."
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+
+(defun smart-open-line-above ()
+  "Insert an empty line above the current line.
+Position the cursor at it's beginning, according to the current mode."
+  (interactive)
+  (move-beginning-of-line nil)
+  (newline-and-indent)
+  (forward-line -1)
+  (indent-according-to-mode))
+
+(global-set-key [(control shift return)] 'smart-open-line-above)
+(global-set-key [(shift return)] 'smart-open-line)
+
+
 
 ;; ;; ace jump mode major function
 ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode")
@@ -1114,7 +1141,7 @@ ad-do-it))))
 
 					; # retour a la ligne auto
 (setq default-major-mode 'text-mode)
-;(add-hook 'text-mode-hook 'turn-on-auto-fill)
+(add-hook 'text-mode-hook 'turn-off-auto-fill)
 
 					; # Scrolling verticale
 					;(setq-default scroll-conservatively 5)
