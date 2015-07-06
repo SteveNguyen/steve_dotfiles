@@ -2,7 +2,7 @@
 //
 // File Name	: '@@@'
 // Author	: Steve NGUYEN
-// Contact      : steve.nguyen@inria.fr
+// Contact      : steve.nguyen.000@gmail.com
 // Created	: DDDD
 // Revised	:
 // Version	:
