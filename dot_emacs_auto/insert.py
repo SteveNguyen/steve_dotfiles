@@ -1,10 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-########################################################################
+#
 #  File Name	: '@@@'
 #  Author	: Steve NGUYEN
-#  Contact      : steve.nguyen@inria.fr
+#  Contact      : steve.nguyen@labri.fr
 #  Created	: DDDD
 #  Revised	:
 #  Version	:
@@ -15,4 +15,4 @@
 #
 #
 #  Notes:	notes
-########################################################################
+#
