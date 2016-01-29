@@ -7,6 +7,8 @@
       C-c C-space : Ace jump
       C-x C-space : Ace pop back
 
+      C-c C-k :  copy the current line
+
       C-c m : compile
 
       C-! : Hippie expand
@@ -44,7 +46,14 @@
       M-left : navigate between tabs
       M-right :
 
+      C-x C-v RET: reload file from disk
+
       ")
+
+
+
+;; alias qrr for interactiv regexp replace
+(defalias 'qrr 'query-replace-regexp)
 
 ;; hide toolbar
 (tool-bar-mode -1)
@@ -61,6 +70,9 @@
 
 ;; line number at left?
 (global-linum-mode t)
+
+;; delete the selection when DEL of C-y
+(delete-selection-mode 1)
 
 ;; just remove the trailing whitespaces when saving
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -80,7 +92,7 @@
 (package-initialize)
 
 
-;; (let ((base "/home/steve/.emacs.d/"))
+;; (let ((base "~/.emacs.d/"))
 ;;   (add-to-list 'load-path base)
 ;;   (dolist (f (directory-files base))
 ;;     (let ((name (concat base "/" f)))
@@ -118,24 +130,56 @@
 
 
 
+
+
+;; experimental super awesome nyan-mode
+(add-to-list 'load-path "~/.emacs.d/site-lisp/nyan-mode")
+(setq nyan-wavy-trail t)
+(require 'nyan-mode)
+
+;; copy the curernt line
+  (defun copy-line (arg)
+    "Copy lines (as many as prefix argument) in the kill ring.
+      Ease of use features:
+      - Move to start of next line.
+      - Appends the copy on sequential calls.
+      - Use newline as last char even on the last line of the buffer.
+      - If region is active, copy its lines."
+    (interactive "p")
+    (let ((beg (line-beginning-position))
+          (end (line-end-position arg)))
+      (when mark-active
+        (if (> (point) (mark))
+            (setq beg (save-excursion (goto-char (mark)) (line-beginning-position)))
+          (setq end (save-excursion (goto-char (mark)) (line-end-position)))))
+      (if (eq last-command 'copy-line)
+          (kill-append (buffer-substring beg end) (< end beg))
+        (kill-ring-save beg end)))
+    (kill-append "\n" nil)
+    (beginning-of-line (or (and arg (1+ arg)) 2))
+    (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
+
+;; set key binding
+(global-set-key "\C-c\C-k" 'copy-line)
+
 ;; Browse the kill ring+ M-x package install browse-kill-ring+
 (require 'browse-kill-ring+)
 (global-set-key (kbd "C-x C-y") 'browse-kill-ring)
 
 ;; undo tree
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/undo-tree")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/undo-tree")
 (require 'undo-tree)
 (global-undo-tree-mode)
 
 
 ;; tabbar
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/tabbar")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/tabbar")
 (require 'tabbar)
 (global-set-key [M-left] 'tabbar-backward-tab)
 (global-set-key [M-right] 'tabbar-forward-tab)
 
 ;; tabbar/ruler
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/tabbar-ruler.el")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/tabbar-ruler.el")
 (setq tabbar-ruler-global-tabbar t) ; If you want tabbar
 ;; (setq tabbar-ruler-global-ruler t) ; if you want a global ruler
 ;; (setq tabbar-ruler-popup-menu t) ; If you want a popup menu.
@@ -145,7 +189,7 @@
 (require 'tabbar-ruler)
 
 ;; indication of the 70 char colum
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/fill-column-indicator")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/fill-column-indicator")
 (require 'fill-column-indicator)
 ;; (define-globalized-minor-mode
 ;;  global-fci-mode fci-mode (lambda () (fci-mode 1)))
@@ -177,7 +221,7 @@
 
 
 ;; ace jump mode major function
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/ace-jump-mode.el")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode.el")
 (require 'ace-jump-mode)
 (autoload
   'ace-jump-mode
@@ -219,7 +263,7 @@ Position the cursor at it's beginning, according to the current mode."
 
 
 ;; ;; ace jump mode major function
-;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/ace-jump-mode")
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode")
 ;; (require 'ace-jump-mode)
 ;; (autoload
 ;;   'ace-jump-mode
@@ -274,13 +318,13 @@ Position the cursor at it's beginning, according to the current mode."
 
 ;; Hippie expand
 
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/hippie-expand")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/hippie-expand")
 (global-set-key (kbd "C-!") 'hippie-expand)
 (global-set-key (kbd "C-:") 'hippie-expand-no-case-fold)
 (global-set-key (kbd "C-;") 'hippie-expand-lines)
 
 ;; google translate
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/google-translate")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/google-translate")
 (require 'google-translate)
 (global-set-key (kbd "C-c T") 'google-translate-at-point)
 (global-set-key (kbd "C-c t") 'google-translate-query-translate)
@@ -294,10 +338,10 @@ Position the cursor at it's beginning, according to the current mode."
 
 
 ;; magit, for git...
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/elpa/cl-lib-0.2/")
-(require 'cl-lib)
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/magit")
-(require 'magit)
+;; (add-to-l;; ist 'load-path "~/.emacs.d/site-lisp/elpa/cl-lib-0.2/")
+;; (require 'cl-lib)
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/magit")
+;; (require 'magit)
 
 
 ;; indent
@@ -322,7 +366,7 @@ Position the cursor at it's beginning, according to the current mode."
 (global-set-key (kbd "C-c i") 'indent-region-or-buffer)
 
 ;; highlight indentation
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/Highlight-Indentation-for-Emacs")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/Highlight-Indentation-for-Emacs")
 (require 'highlight-indentation)
 ;; (set-face-background 'highlight-indentation-face "#696969")
 ;; (set-face-background 'highlight-indentation-current-column-face "#a9a9a9")
@@ -332,7 +376,7 @@ Position the cursor at it's beginning, according to the current mode."
 (add-hook 'python-mode-hook 'highlight-indentation-current-column-mode)
 
 ;;pas mal
-;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/indent-hint")
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/indent-hint")
 ;; (require 'visual-indentation-mode)
 
 
@@ -342,7 +386,7 @@ Position the cursor at it's beginning, according to the current mode."
 (setq ibuffer-default-sorting-mode 'major-mode)
 
 ;; multiple-cursors
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/multiple-cursors")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/multiple-cursors")
 (require 'multiple-cursors)
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -354,21 +398,14 @@ Position the cursor at it's beginning, according to the current mode."
 ;; (add-to-list 'vc-handled-backends 'SVN)
 
 
-;; helm
-;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/helm")
-;; (require 'helm-config)
-;; (global-set-key (kbd "C-c h") 'helm-mini)
-;; (helm-mode 1)
-
-
 ;; marker-visit, easily navigate through markers
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/marker-visit")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/marker-visit")
 (require 'marker-visit)
 (global-set-key (kbd "S-<up>") 'marker-visit-prev)
 (global-set-key (kbd "S-<down>") 'marker-visit-next)
 
 ;; visible mark
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/visible-mark")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/visible-mark")
 
 (defface visible-mark-active ;; put this before (require 'visible-mark)
   '((((type tty) (class mono)))
@@ -378,6 +415,16 @@ Position the cursor at it's beginning, according to the current mode."
 
 (require 'visible-mark)
 (global-visible-mark-mode 1)
+
+
+
+
+;; helm TODO: one day switch ido/smex to helm
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/helm")
+;; (require 'helm-config)
+;; (global-set-key (kbd "C-c h") 'helm-mini)
+;; (helm-mode 1)
+
 
 
 ;; ido completion. Much better
@@ -414,8 +461,8 @@ ad-do-it))))
 
 
 
-;;and smex
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/smex")
+;;and smex (goes with ido)
+(add-to-list 'load-path "~/.emacs.d/site-lisp/smex")
 (require 'smex) ; Not needed if you use package.el
 (smex-initialize) ; Can be omitted. This might cause a (minimal) delay
 					; when Smex is auto-initialized on its first run.
@@ -426,11 +473,11 @@ ad-do-it))))
 
 
 ;; minimap
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-minimap")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-minimap")
 (require 'minimap)
 
 ;; other minimap (sublimity)
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/sublimity")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/sublimity")
 (require 'sublimity)
 ;; (require 'sublimity-scroll)
 (require 'sublimity-map)
@@ -441,7 +488,7 @@ ad-do-it))))
 
 
 ;; expend-region
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/expand-region")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/expand-region")
 (require 'expand-region)
 (global-set-key (kbd "C-=") 'er/expand-region)
 
@@ -535,7 +582,7 @@ ad-do-it))))
 
 
 ;; smart operator, adding spaces between operators for python
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/smart-operator")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/smart-operator")
 (require 'smart-operator)
 (add-hook 'python-mode-hook 'smart-operator-mode)
 
@@ -601,9 +648,9 @@ ad-do-it))))
 ;;M-x package-install websocket
 ;;M-x package-install request
 
-;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-websocket")
-;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-request")
-;; (add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/emacs-ipython-notebook/")
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-websocket")
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-request")
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-ipython-notebook/")
 ;; (require 'websocket)
 ;; (require 'request)
 ;; (require 'ein)
@@ -643,10 +690,10 @@ ad-do-it))))
 
 
 
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/predictive")
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/predictive/html")
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/predictive/latex")
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/predictive/texinfo")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/predictive")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/predictive/html")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/predictive/latex")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/predictive/texinfo")
 (require 'predictive)
 (autoload 'predictive-mode "predictive" "predictive" t)
 (set-default 'predictive-auto-add-to-dict t)
@@ -695,7 +742,7 @@ ad-do-it))))
 
 
 ;; web mode
-(add-to-list 'load-path "/home/steve/.emacs.d/site-lisp/web-mode")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/web-mode")
 (require 'web-mode)
 (add-to-list 'ac-modes 'web-mode)
 
@@ -710,7 +757,7 @@ ad-do-it))))
 	("\\.cxx$" . c++-mode)
 	("\\.hpp$" . c++-mode)
         ("\\.c$"  . c-mode)
-        ("\\.h$"  . c-mode)
+        ("\\.h$"  . c++-mode)
 	("\\.py$" . python-mode)
         ("\\.el$" . emacs-lisp-mode)
         ("\\.emacs$" . emacs-lisp-mode)
@@ -996,8 +1043,6 @@ ad-do-it))))
 					;(transient-mark-mode t)
 
 
-
-
 (add-hook 'text-mode-hook 'turn-on-auto-fill)
 
 
@@ -1108,7 +1153,7 @@ ad-do-it))))
 
 ;; ;;ECB
 ;; (add-to-list 'load-path
-;;                      "/home/steve/.emacs.d/site-lisp/ecb-2.40")
+;;                      "~/.emacs.d/site-lisp/ecb-2.40")
 ;;  (require 'ecb-autoloads)
 ;; ;; CEDET with emacs23
 
@@ -1117,9 +1162,9 @@ ad-do-it))))
 (setq stack-trace-on-error t)
 
 ;; (add-to-list 'load-path
-;;                      "/home/steve/.emacs.d/site-lisp/cedet-1.1/semantic")
+;;                      "~/.emacs.d/site-lisp/cedet-1.1/semantic")
 ;; (add-to-list 'load-path
-;;                      "/home/steve/.emacs.d/site-lisp/cedet-1.1/common")
+;;                      "~/.emacs.d/site-lisp/cedet-1.1/common")
 
 ;; (setq integrated-cedet-p (and (>= emacs-major-version 23)
 ;;                               (>= emacs-minor-version 2)))
@@ -1165,8 +1210,8 @@ ad-do-it))))
 
 ;; ;; ;; Load CEDET
 ;; ;;(load-file "/usr/share/emacs/23.3/lisp/cedet/cedet.el")
-;; ;;(load-file "/home/steve/divers/cedet-1.1/common/cedet.el")
-;; ;;(load-file "/home/steve/.emacs.d/cedet-1.1/common/cedet.el")
+;; ;;(load-file "~/divers/cedet-1.1/common/cedet.el")
+;; ;;(load-file "~/.emacs.d/cedet-1.1/common/cedet.el")
 
 ;; ;;(global-ede-mode 'nil)                  ; do NOT use project manager
 ;; ;;(global-ede-mode t)
