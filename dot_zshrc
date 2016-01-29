@@ -122,7 +122,8 @@ source /opt/ros/indigo/setup.zsh
 source /home/steve/Project/DEV/catkin_ws/devel/setup.zsh
 
 export ROS_IP=`hostname -I`
-export ROS_MASTER_URI=http://rosban.local:11311/
+# export ROS_MASTER_URI=http://rosban.local:11311/
+export ROS_MASTER_URI=http://steve-hp:11311/
 
 #BVS STUFFS
 export BVSDIR=/home/steve/Project/DEV/BVS
