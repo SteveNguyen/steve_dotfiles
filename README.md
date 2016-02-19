@@ -23,7 +23,7 @@ required packages (M-x package-install):
 - epc
 - browse-kill-ring+
 - py-autopep8 (python-autopep8)
-
+- aggressive-indent
 
 #zsh
 

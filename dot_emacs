@@ -1036,6 +1036,8 @@ ad-do-it))))
 (add-hook 'c-mode-common-hook 'highlight-indentation-mode)
 (add-hook 'c-mode-common-hook 'highlight-indentation-current-column-mode)
 
+(global-aggressive-indent-mode 1)
+
 
 ;; (add-hook 'c-mode-hook '(lambda ()
 ;; 			  (c-toggle-auto-hungry-state t)))
