@@ -15,6 +15,7 @@ required package:
 - virtualenv (sudo pip install virtualenv)
 - jedi (sudo pip install jedi)
 - epc (sudo pip install epc)
+- gnu global (sudo apt-get instal global)
 
 required packages (M-x package-install):
 
