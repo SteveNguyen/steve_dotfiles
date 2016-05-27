@@ -26,6 +26,7 @@ required packages (M-x package-install):
 - py-autopep8 (python-autopep8)
 - aggressive-indent
 - helm-gtags (requires gnu global)
+- powerline
 
 #zsh
 
