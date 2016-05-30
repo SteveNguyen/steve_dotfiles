@@ -48,6 +48,10 @@
 
       C-x C-v RET: reload file from disk
 
+      M-t : gtags jump to definition
+      M-r :
+      M-s : find symbol
+      M-, : jump back
       ")
 
 
@@ -1040,6 +1044,32 @@ ad-do-it))))
 (add-hook 'c-mode-common-hook 'highlight-indentation-mode)
 (add-hook 'c-mode-common-hook 'highlight-indentation-current-column-mode)
 
+(global-aggressive-indent-mode 1)
+
+
+;;helm-gtags, use gnu global
+;;; Enable helm-gtags-mode
+(add-hook 'c-mode-hook 'helm-gtags-mode)
+(add-hook 'c++-mode-hook 'helm-gtags-mode)
+(add-hook 'python-mode-hook 'helm-gtags-mode)
+
+;; gtags customize
+(custom-set-variables
+ '(helm-gtags-path-style 'relative)
+ '(helm-gtags-ignore-case t)
+ '(helm-gtags-auto-update t))
+
+;; gtags key bindings
+(eval-after-load "helm-gtags"
+  '(progn
+    (define-key helm-gtags-mode-map (kbd "M-t") 'helm-gtags-find-tag)
+    (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
+    (define-key helm-gtags-mode-map (kbd "M-s") 'helm-gtags-find-symbol)
+    (define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
+    (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+    (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
+    (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)))
+
 
 ;; (add-hook 'c-mode-hook '(lambda ()
 ;; 			  (c-toggle-auto-hungry-state t)))
@@ -1077,6 +1107,10 @@ ad-do-it))))
 (require 'paren)
 (show-paren-mode 1)
 (setq-default hilight-paren-expression t)
+
+;; fancy powerline
+(require 'powerline)
+(powerline-default-theme)
 
 ;(electric-indent-mode +1) ;a little annoying
 (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
