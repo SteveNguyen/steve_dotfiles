@@ -137,6 +137,10 @@
 (setq nyan-wavy-trail t)
 (require 'nyan-mode)
 
+;; Org to s5 html presentation
+(add-to-list 'load-path "~/.emacs.d/site-lisp/org-s5")
+(require 'org-s5)
+
 ;; copy the curernt line
   (defun copy-line (arg)
     "Copy lines (as many as prefix argument) in the kill ring.

@@ -128,3 +128,6 @@ export ROS_MASTER_URI=http://steve-hp:11311/
 #BVS STUFFS
 export BVSDIR=/home/steve/Project/DEV/BVS
 #export BVS_LIBS=/home/steve/Project/DEV/BVS/lib
+
+#DEPS stuff
+source "$HOME/Project/Repo/Rhoban/deps/zshrc"
