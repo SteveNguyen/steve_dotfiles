@@ -15,6 +15,7 @@ required package:
 - virtualenv (sudo pip install virtualenv)
 - jedi (sudo pip install jedi)
 - epc (sudo pip install epc)
+- gnu global (sudo apt-get instal global)
 
 required packages (M-x package-install):
 
@@ -24,6 +25,8 @@ required packages (M-x package-install):
 - browse-kill-ring+
 - py-autopep8 (python-autopep8)
 - aggressive-indent
+- helm-gtags (requires gnu global)
+- powerline
 
 #zsh
 
