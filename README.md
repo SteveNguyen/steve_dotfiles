@@ -27,7 +27,7 @@ required packages (M-x package-install):
 - aggressive-indent
 - helm-gtags (requires gnu global)
 - powerline
-
+- highlight-indent-guides
 #zsh
 
 - curl -L https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh
