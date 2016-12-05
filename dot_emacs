@@ -45,8 +45,8 @@
 
       C-x C-y : browse kill ring
 
-      M-left : navigate between tabs
-      M-right :
+      s-left : navigate between tabs
+      s-right :
 
       C-x C-v RET: reload file from disk
 
@@ -185,8 +185,8 @@
 ;; tabbar
 (add-to-list 'load-path "~/.emacs.d/site-lisp/tabbar")
 (require 'tabbar)
-(global-set-key [M-left] 'tabbar-backward-tab)
-(global-set-key [M-right] 'tabbar-forward-tab)
+(global-set-key [s-left] 'tabbar-backward-tab)
+(global-set-key [s-right] 'tabbar-forward-tab)
 
 ;; tabbar/ruler
 (add-to-list 'load-path "~/.emacs.d/site-lisp/tabbar-ruler.el")
@@ -508,8 +508,8 @@ ad-do-it))))
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-log-done t)
-(setq org-agenda-files (list "~/pulse/Sync/Org/todo.org"))
-
+;; (setq org-agenda-files (list "~/pulse/Sync/Org/todo.org"))
+(setq org-agenda-files '("~/Project/Repo/org"))
 
 ;; json-mode
 ;; (require 'json-mode)
@@ -748,7 +748,7 @@ ad-do-it))))
 (prefer-coding-system 'utf-8)
 
 
-(setq x-super-keysym 'meta)  ;;touche windows en meta
+(setq x-super-keysym 'super)  ;;windows key is super (default)
 
 
 ;; web mode
@@ -1071,13 +1071,13 @@ ad-do-it))))
 ;; gtags key bindings
 (eval-after-load "helm-gtags"
   '(progn
-    (define-key helm-gtags-mode-map (kbd "M-t") 'helm-gtags-find-tag)
-    (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
-    (define-key helm-gtags-mode-map (kbd "M-s") 'helm-gtags-find-symbol)
-    (define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
-    (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-    (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history)
-    (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)))
+     (define-key helm-gtags-mode-map (kbd "M-t") 'helm-gtags-find-tag)
+     (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
+     (define-key helm-gtags-mode-map (kbd "M-s") 'helm-gtags-find-symbol)
+     (define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
+     (define-key helm-gtags-mode-map (kbd "C-x <") 'helm-gtags-previous-history)
+     (define-key helm-gtags-mode-map (kbd "C-x >") 'helm-gtags-next-history)
+     (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)))
 
 
 ;; (add-hook 'c-mode-hook '(lambda ()
