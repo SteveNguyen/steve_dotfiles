@@ -21,6 +21,8 @@ required packages (M-x package-install):
 
 - jedi (then M-x jedi:install-server, then create simlink .emacs.d/elpa/jedi ->.emacs.d/elpa/jedi-xxxxx)
 - auto-complete
+- auto-complete-c-headers
+- iedit
 - epc
 - browse-kill-ring+
 - py-autopep8 (python-autopep8)
@@ -28,6 +30,8 @@ required packages (M-x package-install):
 - helm-gtags (requires gnu global)
 - powerline
 - highlight-indent-guides
+- yasnippet
+
 #zsh
 
 - curl -L https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh | sh
