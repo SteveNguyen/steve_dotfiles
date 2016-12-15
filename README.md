@@ -31,6 +31,7 @@ required packages (M-x package-install):
 - powerline
 - highlight-indent-guides
 - yasnippet
+- org-bullets
 
 #zsh
 
