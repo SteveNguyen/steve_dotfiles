@@ -32,6 +32,10 @@ required packages (M-x package-install):
 - highlight-indent-guides
 - yasnippet
 - org-bullets
+- flycheck-pyflakes (pip install pyflakes)
+- cmake-ide (rtags, flycheck, autocomplete-clang, company-clang, irony, needs clang, libclang) see: https://github.com/atilaneves/cmake-ide
+  infos about rtags integration: https://syamajala.github.io/c-ide.html
+  	      	    		 https://github.com/Andersbakken/rtags
 
 #zsh
 

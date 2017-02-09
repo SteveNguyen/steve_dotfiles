@@ -34,7 +34,7 @@
       S-down :
 
       C-a : go to begining of line
-      C-e
+      C-e : end
 
       S-enter : indent insert new line below
       C-S-enter
@@ -50,12 +50,16 @@
 
       C-x C-v RET: reload file from disk
 
-      M-t : gtags jump to definition
-      M-r :
+      M-t : rtags jump to definition
+      M-r : jump back
       M-s : find symbol
-      M-, : jump back
+      M-i : symbol info
 
-      C-c ; : simultaneous edit different regions
+      C-c ; : simultaneous edit different regions with same string
+
+      C-x r l: list bookmarks
+      C-x r m: add bookmark
+      C-x r b: jump to bookmark
 
       ")
 
@@ -630,6 +634,14 @@ ad-do-it))))
 (require 'smart-operator)
 (add-hook 'python-mode-hook 'smart-operator-mode)
 
+;; syntax checking
+(require 'flycheck-pyflakes)
+(add-hook 'python-mode-hook 'flycheck-mode)
+
+;; disable the slow ones
+(add-to-list 'flycheck-disabled-checkers 'python-flake8)
+(add-to-list 'flycheck-disabled-checkers 'python-pylint)
+
 
 ;; Jedi python completion
 ;; (setq jedi:setup-keys t)
@@ -1086,30 +1098,34 @@ ad-do-it))))
 (setq highlight-indent-guides-method 'character)
 (add-hook 'c-mode-common-hook 'highlight-indent-guides-mode)
 
+;; AGRESSIVE INDENT
 (global-aggressive-indent-mode 1)
 
-;;helm-gtags, use gnu global
-;;; Enable helm-gtags-mode
-(add-hook 'c-mode-hook 'helm-gtags-mode)
-(add-hook 'c++-mode-hook 'helm-gtags-mode)
-(add-hook 'python-mode-hook 'helm-gtags-mode)
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;; WIP TESTING
 
-;; gtags customize
-(custom-set-variables
- '(helm-gtags-path-style 'relative)
- '(helm-gtags-ignore-case t)
- '(helm-gtags-auto-update t))
+;; ;;helm-gtags, use gnu global
+;; ;;; Enable helm-gtags-mode
+;; (add-hook 'c-mode-hook 'helm-gtags-mode)
+;; (add-hook 'c++-mode-hook 'helm-gtags-mode)
+;; (add-hook 'python-mode-hook 'helm-gtags-mode)
 
-;; gtags key bindings
-(eval-after-load "helm-gtags"
-  '(progn
-    (define-key helm-gtags-mode-map (kbd "M-t") 'helm-gtags-find-tag)
-    (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
-    (define-key helm-gtags-mode-map (kbd "M-s") 'helm-gtags-find-symbol)
-    (define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
-    (define-key helm-gtags-mode-map (kbd "C-x <") 'helm-gtags-previous-history)
-    (define-key helm-gtags-mode-map (kbd "C-x >") 'helm-gtags-next-history)
-    (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)))
+;; ;; gtags customize
+;; (custom-set-variables
+;;  '(helm-gtags-path-style 'relative)
+;;  '(helm-gtags-ignore-case t)
+;;  '(helm-gtags-auto-update t))
+
+;; ;; gtags key bindings
+;; (eval-after-load "helm-gtags"
+;;   '(progn
+;;     (define-key helm-gtags-mode-map (kbd "M-t") 'helm-gtags-find-tag)
+;;     (define-key helm-gtags-mode-map (kbd "M-r") 'helm-gtags-find-rtag)
+;;     (define-key helm-gtags-mode-map (kbd "M-s") 'helm-gtags-find-symbol)
+;;     (define-key helm-gtags-mode-map (kbd "M-g M-p") 'helm-gtags-parse-file)
+;;     (define-key helm-gtags-mode-map (kbd "C-x <") 'helm-gtags-previous-history)
+;;     (define-key helm-gtags-mode-map (kbd "C-x >") 'helm-gtags-next-history)
+;;     (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)))
 
 
 ;; c/c++ header auto complete
@@ -1127,76 +1143,261 @@ ad-do-it))))
 ;; iedit, simultaneous editing different regions
 (define-key global-map (kbd "C-c ;") 'iedit-mode)
 
-;;semantic auto-complete. Might be slow...
-(semantic-mode 1)
-(defun my:add-semantic-to-autocomplete()
-  (add-to-list 'ac-sources 'ac-source-semantic)
-  )
-(add-hook 'c-mode-common-hook 'my:add-semantic-to-autocomplete)
-(global-semanticdb-minor-mode 1)
-(global-semantic-idle-scheduler-mode 1)
-;; (global-ede-mode t)
 
-;; parsing local directories for semantic
-(defvar c-files-regex ".*\\.\\(c\\|cc\\|cpp\\|h\\|hh\\|hpp\\)"
-  "A regular expression to match any c/c++ related files under a directory")
+;; company-mode auto completion
+;; (add-hook 'after-init-hook 'global-company-mode)
 
-(defun my-semantic-parse-dir (root regex)
-  "
-   This function is an attempt of mine to force semantic to
-   parse all source files under a root directory. Arguments:
-   -- root: The full path to the root directory
-   -- regex: A regular expression against which to match all files in the directory
-  "
-  (let (
-        ;;make sure that root has a trailing slash and is a dir
-        (root (file-name-as-directory root))
-        (files (directory-files root t ))
-	)
-    ;; remove current dir and parent dir from list
-    (setq files (delete (format "%s." root) files))
-    (setq files (delete (format "%s.." root) files))
-    (while files
-      (setq file (pop files))
-      (if (not(file-accessible-directory-p file))
-          ;;if it's a file that matches the regex we seek
-          (progn (when (string-match-p regex file)
-		   (save-excursion
-		     (semanticdb-file-table-object file))
-		   ))
-          ;;else if it's a directory
-          (my-semantic-parse-dir file regex)
-	  )
-      )
-    )
-  )
 
-(defun my-semantic-parse-current-dir (regex)
-  "
-   Parses all files under the current directory matching regex
-  "
-  (my-semantic-parse-dir (file-name-directory(buffer-file-name)) regex)
-  )
 
-(defun lk-parse-curdir-c ()
-  "
-   Parses all the c/c++ related files under the current directory
-   and inputs their data into semantic
-  "
+;; =============
+;; irony-mode
+;; =============
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+;; =============
+;; company mode
+;; =============
+(add-hook 'c++-mode-hook 'company-mode)
+(add-hook 'c-mode-hook 'company-mode)
+;; replace the `completion-at-point' and `complete-symbol' bindings in
+;; irony-mode's buffers by irony-mode's function
+(defun my-irony-mode-hook ()
+  (define-key irony-mode-map [remap completion-at-point]
+	      'irony-completion-at-point-async)
+  (define-key irony-mode-map [remap complete-symbol]
+	      'irony-completion-at-point-async))
+(add-hook 'irony-mode-hook 'my-irony-mode-hook)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
+
+;; (eval-after-load 'company
+;;   '(add-to-list 'company-backends 'company-irony))
+(require 'company-irony-c-headers)
+(eval-after-load 'company
+  '(add-to-list
+    'company-backends '(company-irony-c-headers company-irony)))
+
+;; (optional) adds CC special commands to `company-begin-commands' in order to
+;; trigger completion at interesting places, such as after scope operator
+;;     std::|
+(add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+;; =============
+;; flycheck-mode
+;; =============
+(add-hook 'c++-mode-hook 'flycheck-mode)
+(add-hook 'c-mode-hook 'flycheck-mode)
+(eval-after-load 'flycheck
+  '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+
+
+;; Doesn't work?
+;; ;; flycheck rtags
+;; (require 'flycheck-rtags)
+
+;; (defun my-flycheck-rtags-setup ()
+;;   (flycheck-select-checker 'rtags)
+;;   (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+;;   (setq-local flycheck-check-syntax-automatically nil))
+;; ;; c-mode-common-hook is also called by c++-mode
+;; (add-hook 'c-mode-common-hook 'my-flycheck-rtags-setup)
+
+
+;; rtags
+(require 'rtags)
+(rtags-start-process-unless-running)
+(add-hook 'c-mode-common-hook 'rtags-start-process-unless-running)
+(add-hook 'c++-mode-common-hook 'rtags-start-process-unless-running)
+;; cmake-ide (seems good)
+(cmake-ide-setup)
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;; (require 'company-rtags)
+
+;; (setq rtags-completions-enabled t)
+;; (eval-after-load 'company
+;;   '(add-to-list
+;;     'company-backends 'company-rtags))
+;; (setq rtags-autostart-diagnostics t)
+;; (rtags-enable-standard-keybindings)
+(require 'rtags-helm)
+(setq rtags-use-helm t)
+
+(define-key c-mode-base-map (kbd "M-t") (function rtags-find-symbol-at-point))
+(define-key c-mode-base-map (kbd "M-r") (function rtags-location-stack-back))
+(define-key c-mode-base-map (kbd "M-s") (function rtags-find-all-references-at-point))
+(define-key c-mode-base-map (kbd "M-i") (function rtags-symbol-info))
+
+
+
+;; rtags or gtags if it doesn't work
+;; (defun use-rtags (&optional useFileManager)
+;;   (and (rtags-executable-find "rc")
+;;        (cond ((not (gtags-get-rootpath)) t)
+;;              ((and (not (eq major-mode 'c++-mode))
+;;                    (not (eq major-mode 'c-mode))) (rtags-has-filemanager))
+;;              (useFileManager (rtags-has-filemanager))
+;;              (t (rtags-is-indexed)))))
+
+;; (defun tags-find-symbol-at-point (&optional prefix)
+;;   (interactive "P")
+;;   (if (and (not (rtags-find-symbol-at-point prefix)) rtags-last-request-not-indexed)
+;;       (gtags-find-tag)))
+;; (defun tags-find-references-at-point (&optional prefix)
+;;   (interactive "P")
+;;   (if (and (not (rtags-find-references-at-point prefix)) rtags-last-request-not-indexed)
+;;       (gtags-find-rtag)))
+;; (defun tags-find-symbol ()
+;;   (interactive)
+;;   (call-interactively (if (use-rtags) 'rtags-find-symbol 'gtags-find-symbol)))
+;; (defun tags-find-references ()
+;;   (interactive)
+;;   (call-interactively (if (use-rtags) 'rtags-find-references 'gtags-find-rtag)))
+;; (defun tags-find-file ()
+;;   (interactive)
+;;   (call-interactively (if (use-rtags t) 'rtags-find-file 'gtags-find-file)))
+;; (defun tags-imenu ()
+;;   (interactive)
+;;   (call-interactively (if (use-rtags t) 'rtags-imenu 'idomenu)))
+
+;; (define-key c-mode-base-map (kbd "M-;") (function tags-find-symbol-at-point))
+;; (define-key c-mode-base-map (kbd "M-,") (function tags-find-references-at-point))
+;; (define-key c-mode-base-map (kbd "M-:") (function tags-find-file))
+;; (define-key c-mode-base-map (kbd "C-.") (function tags-find-symbol))
+;; (define-key c-mode-base-map (kbd "C-,") (function tags-find-references))
+;; (define-key c-mode-base-map (kbd "C-<") (function rtags-find-virtuals-at-point))
+;; (define-key c-mode-base-map (kbd "M-i") (function tags-imenu))
+
+;; (define-key global-map (kbd "M-;") (function tags-find-symbol-at-point))
+;; (define-key global-map (kbd "M-,") (function tags-find-references-at-point))
+;; (define-key global-map (kbd "M-:") (function tags-find-file))
+;; (define-key global-map (kbd "C-.") (function tags-find-symbol))
+;; (define-key global-map (kbd "C-,") (function tags-find-references))
+;; (define-key global-map (kbd "C-<") (function rtags-find-virtuals-at-point))
+;; (define-key global-map (kbd "M-i") (function tags-imenu))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; =============
+;; eldoc-mode
+;; =============
+(add-hook 'irony-mode-hook 'irony-eldoc)
+;; ==========================================
+;; (optional) bind TAB for indent-or-complete
+;; ==========================================
+(defun irony--check-expansion ()
+  (save-excursion
+    (if (looking-at "\\_>") t
+	(backward-char 1)
+	(if (looking-at "\\.") t
+	    (backward-char 1)
+	    (if (looking-at "->") t nil)))))
+(defun irony--indent-or-complete ()
+  "Indent or Complete"
   (interactive)
-  (my-semantic-parse-current-dir c-files-regex)
-  )
+  (cond ((and (not (use-region-p))
+	      (irony--check-expansion))
+	 (message "complete")
+	 (company-complete-common))
+	(t
+	 (message "indent")
+	 (call-interactively 'c-indent-line-or-region))))
+(defun irony-mode-keys ()
+  "Modify keymaps used by `irony-mode'."
+  (local-set-key (kbd "TAB") 'irony--indent-or-complete)
+  (local-set-key [tab] 'irony--indent-or-complete))
+(add-hook 'c-mode-common-hook 'irony-mode-keys)
 
-(defun lk-parse-dir-c (dir)
-  "Prompts the user for a directory and parses all c/c++ related files
-   under the directory
-  "
-  (interactive (list (read-directory-name "Provide the directory to search in:")))
-  (my-semantic-parse-dir (expand-file-name dir) c-files-regex)
-  )
 
-(provide 'lk-file-search)
+;; replace the `completion-at-point' and `complete-symbol' bindings in
+;; irony-mode's buffers by irony-mode's function
+(defun my-irony-mode-hook ()
+  (define-key irony-mode-map [remap completion-at-point]
+	      'irony-completion-at-point-async)
+  (define-key irony-mode-map [remap complete-symbol]
+	      'irony-completion-at-point-async))
+(add-hook 'irony-mode-hook 'my-irony-mode-hook)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
+;;company delay
+(setq company-idle-delay 0)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+;;semantic auto-complete. Might be slow...
+
+;; (semantic-mode 1)
+;; (defun my:add-semantic-to-autocomplete()
+;;   (add-to-list 'ac-sources 'ac-source-semantic)
+;;   )
+;; (add-hook 'c-mode-common-hook 'my:add-semantic-to-autocomplete)
+;; (global-semanticdb-minor-mode 1)
+;; (global-semantic-idle-scheduler-mode 1)
+;; ;; (global-ede-mode t)
+
+;; ;; parsing local directories for semantic
+;; (defvar c-files-regex ".*\\.\\(c\\|cc\\|cpp\\|h\\|hh\\|hpp\\)"
+;;   "A regular expression to match any c/c++ related files under a directory")
+
+;; (defun my-semantic-parse-dir (root regex)
+;;   "
+;;    This function is an attempt of mine to force semantic to
+;;    parse all source files under a root directory. Arguments:
+;;    -- root: The full path to the root directory
+;;    -- regex: A regular expression against which to match all files in the directory
+;;   "
+;;   (let (
+;;         ;;make sure that root has a trailing slash and is a dir
+;;         (root (file-name-as-directory root))
+;;         (files (directory-files root t ))
+;; 	)
+;;     ;; remove current dir and parent dir from list
+;;     (setq files (delete (format "%s." root) files))
+;;     (setq files (delete (format "%s.." root) files))
+;;     (while files
+;;       (setq file (pop files))
+;;       (if (not(file-accessible-directory-p file))
+;;           ;;if it's a file that matches the regex we seek
+;;           (progn (when (string-match-p regex file)
+;; 		   (save-excursion
+;; 		     (semanticdb-file-table-object file))
+;; 		   ))
+;;           ;;else if it's a directory
+;;           (my-semantic-parse-dir file regex)
+;; 	  )
+;;       )
+;;     )
+;;   )
+
+;; (defun my-semantic-parse-current-dir (regex)
+;;   "
+;;    Parses all files under the current directory matching regex
+;;   "
+;;   (my-semantic-parse-dir (file-name-directory(buffer-file-name)) regex)
+;;   )
+
+;; (defun lk-parse-curdir-c ()
+;;   "
+;;    Parses all the c/c++ related files under the current directory
+;;    and inputs their data into semantic
+;;   "
+;;   (interactive)
+;;   (my-semantic-parse-current-dir c-files-regex)
+;;   )
+
+;; (defun lk-parse-dir-c (dir)
+;;   "Prompts the user for a directory and parses all c/c++ related files
+;;    under the directory
+;;   "
+;;   (interactive (list (read-directory-name "Provide the directory to search in:")))
+;;   (my-semantic-parse-dir (expand-file-name dir) c-files-regex)
+;;   )
+
+;; (provide 'lk-file-search)
+
+;; ;; --semantic
 
 
 (setq
