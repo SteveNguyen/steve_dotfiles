@@ -109,6 +109,8 @@ alias sf='fasd -sif' # interactive file selection
 alias z='fasd_cd -d' # cd, same functionality as j in autojump
 alias zz='fasd_cd -d -i' # cd with interactive selection
 
+alias emacs='emacs -mm' #emacs maximised
+
 #disable the shared history between terminals
 unsetopt share_history
 
