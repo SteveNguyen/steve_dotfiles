@@ -147,6 +147,14 @@
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region-or-line)
 (global-set-key (kbd "C-c u") 'uncomment-region)
 
+;; /* */ comment style for c++?
+;; (defun my-c++-mode-hook ()
+;;   (c-set-style "stroustrup")
+;;   (set (make-local-variable 'comment-start) "/* ")
+;;   (set (make-local-variable 'comment-end) " */"))
+;; (add-hook 'c++-mode-hook 'my-c++-mode-hook)
+
+
 ;; move cursor by camelCase
 (subword-mode 1)
 
@@ -851,6 +859,11 @@ ad-do-it))))
       )
 
 
+;; prepare the adaptive text fill for c-mode
+(add-hook 'c-mode-common-hook
+	  (lambda ()
+	    (when (featurep 'filladapt)
+	      (c-setup-filladapt))))
 
 
 (setq-default ispell-program-name "aspell")
@@ -1423,8 +1436,9 @@ ad-do-it))))
 					;(transient-mark-mode t)
 
 
-(add-hook 'text-mode-hook 'turn-on-auto-fill)
-
+;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
+;; better
+(add-hook 'text-mode-hook 'turn-on-filladapt-mode)
 
 					; # Mise en Couleur
 (global-font-lock-mode t)
