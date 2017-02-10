@@ -33,7 +33,15 @@ required packages (M-x package-install):
 - yasnippet
 - org-bullets
 - flycheck-pyflakes (pip install pyflakes)
-- cmake-ide (rtags, flycheck, autocomplete-clang, company-clang, irony, needs clang, libclang) see: https://github.com/atilaneves/cmake-ide
+- company-irony (launch M-x irony-install-server)
+- company-irony-c-headers
+- company-auctex
+- company-bibtex
+- company-c-header
+- irony-eldoc
+- rtags
+- flycheck-irony
+- cmake-ide (rtags, flycheck, autocomplete-clang, company-clang, irony, needs clang, libclang, libclang-dev) see: https://github.com/atilaneves/cmake-ide
   infos about rtags integration: https://syamajala.github.io/c-ide.html
   	      	    		 https://github.com/Andersbakken/rtags
 

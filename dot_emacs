@@ -32,6 +32,11 @@
 
       S-up : navigate through markers
       S-down :
+      C-space : put marker
+      C-u C-space : jump to marker
+
+      C-x r s : save to register
+      C-x r i : copy register
 
       C-a : go to begining of line
       C-e : end
@@ -42,6 +47,7 @@
       C-x u : undo-tree
           q : quit
         C-q : abort
+        C-8: redo
 
       C-x C-y : browse kill ring
 
@@ -141,8 +147,8 @@
 (global-set-key (kbd "C-c c") 'comment-or-uncomment-region-or-line)
 (global-set-key (kbd "C-c u") 'uncomment-region)
 
-
-
+;; move cursor by camelCase
+(subword-mode 1)
 
 
 ;; experimental super awesome nyan-mode
@@ -187,6 +193,8 @@
 (add-to-list 'load-path "~/.emacs.d/site-lisp/undo-tree")
 (require 'undo-tree)
 (global-undo-tree-mode)
+(defalias 'redo 'undo-tree-redo)
+(global-set-key (kbd "C-8") 'redo)
 
 
 ;; tabbar
@@ -496,13 +504,13 @@ ad-do-it))))
 
 
 ;; minimap
-(add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-minimap")
-(require 'minimap)
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-minimap")
+;; (require 'minimap)
 
 ;; other minimap (sublimity)
 (add-to-list 'load-path "~/.emacs.d/site-lisp/sublimity")
 (require 'sublimity)
-;; (require 'sublimity-scroll)
+(require 'sublimity-scroll)
 (require 'sublimity-map)
 ;; (require 'sublimity-attractive)
 (sublimity-map-set-delay nil)
