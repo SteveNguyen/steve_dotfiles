@@ -301,6 +301,16 @@ Position the cursor at it's beginning, according to the current mode."
 
 
 
+;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
+;; nope
+;; (afp-setup-recommended-hooks)
+;; better
+(add-to-list 'load-path "~/.emacs.d/site-lisp/filladapt")
+(require 'filladapt)
+(add-hook 'text-mode-hook 'turn-on-filladapt-mode)
+
+
+
 ;; ;; ace jump mode major function
 ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode")
 ;; (require 'ace-jump-mode)
@@ -318,16 +328,16 @@ Position the cursor at it's beginning, according to the current mode."
 
 ;; compile mode
 ;; Close the compilation window if there was no error at all.
-  ;; (setq compilation-exit-message-function
-  ;;       (lambda (status code msg)
-  ;;         ;; If M-x compile exists with a 0
-  ;;         (when (and (eq status 'exit) (zerop code))
-  ;;           ;; then bury the *compilation* buffer, so that C-x b doesn't go there
-  ;; 	  (bury-buffer "*compilation*")
-  ;; 	  ;; and return to whatever were looking at before
-  ;; 	  (replace-buffer-in-windows "*compilation*"))
-  ;;         ;; Always return the anticipated result of compilation-exit-message-function
-  ;; 	(cons msg code)))
+;; (setq compilation-exit-message-function
+;;       (lambda (status code msg)
+;;         ;; If M-x compile exists with a 0
+;;         (when (and (eq status 'exit) (zerop code))
+;;           ;; then bury the *compilation* buffer, so that C-x b doesn't go there
+;; 	  (bury-buffer "*compilation*")
+;; 	  ;; and return to whatever were looking at before
+;; 	  (replace-buffer-in-windows "*compilation*"))
+;;         ;; Always return the anticipated result of compilation-exit-message-function
+;; 	(cons msg code)))
 
 
 ;; (defun bury-compile-buffer-if-successful (buffer string)
@@ -564,6 +574,12 @@ ad-do-it))))
  )
 
 
+(add-hook 'org-mode-hook
+	  (lambda ()
+	    (setq-local yas/trigger-key [tab])
+	    (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
+
+(add-hook 'org-mode-hook 'turn-off-filladapt-mode) ;; filladapt doesn't work with org
 
 ;; json-mode
 ;; (require 'json-mode)
@@ -1435,10 +1451,6 @@ ad-do-it))))
 
 					;(transient-mark-mode t)
 
-
-;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
-;; better
-(add-hook 'text-mode-hook 'turn-on-filladapt-mode)
 
 					; # Mise en Couleur
 (global-font-lock-mode t)

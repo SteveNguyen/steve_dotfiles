@@ -44,6 +44,9 @@ required packages (M-x package-install):
 - cmake-ide (rtags, flycheck, autocomplete-clang, company-clang, irony, needs clang, libclang, libclang-dev) see: https://github.com/atilaneves/cmake-ide
   infos about rtags integration: https://syamajala.github.io/c-ide.html
   	      	    		 https://github.com/Andersbakken/rtags
+				 https://vxlabs.com/2016/04/11/step-by-step-guide-to-c-navigation-and-completion-with-emacs-and-the-clang-based-rtags/
+- aggressive-fill-paragraph
+
 
 #zsh
 
