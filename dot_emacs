@@ -1241,7 +1241,6 @@ ad-do-it))))
 
 ;; rtags
 (require 'rtags)
-(rtags-start-process-unless-running)
 (add-hook 'c-mode-common-hook 'rtags-start-process-unless-running)
 (add-hook 'c++-mode-common-hook 'rtags-start-process-unless-running)
 ;; cmake-ide (seems good)
