@@ -1263,6 +1263,7 @@ ad-do-it))))
 (define-key c-mode-base-map (kbd "M-r") (function rtags-location-stack-back))
 (define-key c-mode-base-map (kbd "M-s") (function rtags-find-all-references-at-point))
 (define-key c-mode-base-map (kbd "M-i") (function rtags-symbol-info))
+(define-key c-mode-base-map (kbd "M-v") (function rtags-find-virtuals-at-point))
 
 
 
