@@ -123,6 +123,8 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/steve/divers/VREP/V-REP_PRO_EDU_V
 source /opt/ros/indigo/setup.zsh
 source /home/steve/Project/DEV/catkin_ws/devel/setup.zsh
 
+
+
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
 
 #export ROS_IP=`hostname -I`
@@ -133,11 +135,8 @@ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr
 export BVSDIR=/home/steve/Project/DEV/BVS
 #export BVS_LIBS=/home/steve/Project/DEV/BVS/lib
 
-#DEPS stuff
-source $HOME/Project/Repo/Rhoban/deps/zshrc
-
 #CCACHE
-export CCACHE_PREFIX=/usr/bin/distg++
+# export CCACHE_PREFIX=/usr/bin/distg++
 
 
 . /home/steve/torch/install/bin/torch-activate
