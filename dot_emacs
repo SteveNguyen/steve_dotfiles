@@ -955,11 +955,9 @@ ad-do-it))))
 	("\\.h$"   . ["insert.h" auto-update-header-file])
 	("\\.hpp$"   . ["insert.hpp" auto-update-header-file])
 	("\\.c$" . ["insert.c" auto-update-c-source-file])
-	("\\.py$" . ["insert.py" auto-update-c-source-file])
+	("\\.py$" . ["insert.py" auto-update-header-file])
 	))
-(setq auto-insert 'other)
-
-
+;; (setq auto-insert 'other)
 
 ;; function replaces the string '@@@' by the current file
 ;; name. You could use a similar approach to insert name and date into
@@ -971,14 +969,15 @@ ad-do-it))))
 	(narrow-to-region (match-beginning 0) (match-end 0))
 	(replace-match (upcase (file-name-nondirectory buffer-file-name)))
 	(subst-char-in-region (point-min) (point-max) ?. ?_)
+	(subst-char-in-region (point-min) (point-max) ?- ?_)
 	))
     )
   (save-excursion
-    ;; Replace @@@ with file name
+    ;; Replace &&& with file name
     (while (search-forward "&&&" nil t)
       (save-restriction
 	(narrow-to-region (match-beginning 0) (match-end 0))
-	(replace-match (file-name-nondirectory buffer-file-name))
+	(replace-match (file-name-nondirectory buffer-file-name) t)
 	))
     )
 
@@ -987,14 +986,11 @@ ad-do-it))))
     (while (search-forward "DDDD" nil t)
       (save-restriction
 	(narrow-to-region (match-beginning 0) (match-end 0))
-	(replace-match "")
+	(replace-match "" t)
 	(insert-today)
 	))
     )
-
-
-
-)
+  )
 
 (defun insert-today ()
 "Insert today's date into buffer"
@@ -1029,21 +1025,6 @@ ad-do-it))))
       ))
   )
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ;; if you create a file called Test.hpp, this function will replace:
@@ -1171,6 +1152,11 @@ ad-do-it))))
 ;;     (define-key helm-gtags-mode-map (kbd "C-x >") 'helm-gtags-next-history)
 ;;     (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)))
 
+
+;; c++ auto include headers
+(add-to-list 'load-path "~/.emacs.d/site-lisp/cpp-auto-include")
+(require 'cpp-auto-include)
+(add-hook 'c-mode-common-hook 'cpp-auto-include)
 
 ;; c/c++ header auto complete
 (defun my:ac-c-header-init()
