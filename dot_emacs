@@ -158,6 +158,13 @@
 ;; move cursor by camelCase
 (subword-mode 1)
 
+;; Cycle between snake case, camel case, etc.
+(require 'string-inflection)
+(global-set-key (kbd "C-c p") 'string-inflection-cycle)
+(global-set-key (kbd "C-c O") 'string-inflection-camelcase)        ;; Force to CamelCase
+(global-set-key (kbd "C-c o") 'string-inflection-lower-camelcase)  ;; Force to lowerCamelCase
+(global-set-key (kbd "C-c P") 'string-inflection-underscore-function)  ;; Force to underscore
+
 
 ;; experimental super awesome nyan-mode
 (add-to-list 'load-path "~/.emacs.d/site-lisp/nyan-mode")
