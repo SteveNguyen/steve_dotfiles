@@ -29,6 +29,7 @@
       C-= : expend selection region
 
       C-* : ispell word
+      	  : M-x flycheck-mode, M-x flycheck-select-checker
 
       S-up : navigate through markers
       S-down :
@@ -130,16 +131,19 @@
 ;; Make backups of files, even when they're in version control
 (setq vc-make-backup-files t)
 
+;; Line wraping for text
+(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+(setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
 
 ;; Comment/uncomment block
 (defun comment-or-uncomment-region-or-line ()
-    "Comments or uncomments the region or the current line if there's no active region."
-    (interactive)
-    (let (beg end)
-        (if (region-active-p)
-            (setq beg (region-beginning) end (region-end))
-            (setq beg (line-beginning-position) end (line-end-position)))
-        (comment-or-uncomment-region beg end)))
+  "Comments or uncomments the region or the current line if there's no active region."
+  (interactive)
+  (let (beg end)
+    (if (region-active-p)
+	(setq beg (region-beginning) end (region-end))
+      (setq beg (line-beginning-position) end (line-end-position)))
+    (comment-or-uncomment-region beg end)))
 
 ;; (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
 ;; (global-set-key (kbd "C-c u") 'uncomment-region)
@@ -242,13 +246,13 @@
 
 ;; auto-complete
 (require 'auto-complete)
-(global-auto-complete-mode t)
+;; (global-auto-complete-mode t)
 (require 'auto-complete-config)
-(ac-config-default)
+;; (ac-config-default)
 
 ;; yasnippet
 (require 'yasnippet)
-(yas-global-mode 1)
+;; (yas-global-mode 1)
 
 ;; Save point position between sessions
 (require 'saveplace)
@@ -841,6 +845,33 @@ ad-do-it))))
 (require 'web-mode)
 (add-to-list 'ac-modes 'web-mode)
 
+
+
+
+(setq c-default-style "linux")
+(setq c-basic-offset 4)
+(require 'cc-mode)
+
+;; well, this does the job (just modified the basic-offset)
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/google-c-style")
+;; (require 'google-c-style)
+;; (add-hook 'c-mode-common-hook 'google-set-c-style)
+;; (add-hook 'c-mode-common-hook 'google-make-newline-indent)
+
+;; because same random jerk prefer this style...
+(defun ROS-c-mode-hook()
+  (setq c-basic-offset 2)
+  (setq indent-tabs-mode nil)
+  (c-set-offset 'substatement-open 0)
+  (c-set-offset 'innamespace 0)
+  (c-set-offset 'case-label '+)
+  (c-set-offset 'statement-case-open 0))
+(add-hook 'c-mode-common-hook 'ROS-c-mode-hook)
+;;; In order to get namespace indentation correct, .h files must be opened in C++ mode
+
+(define-key c-mode-base-map "\C-m" 'newline-and-indent)
+(define-key c-mode-base-map [ret] 'newline-and-indent)
+
 (setq auto-mode-alist
       '(
 	("\\.txt$" . text-mode)
@@ -896,6 +927,9 @@ ad-do-it))))
 ;;(global-set-key [f2] 'flyspell-mode)
 (global-set-key (kbd "C-*") 'ispell-word)
 
+;; (load-file "<PATH>/flycheck-grammalecte/flycheck-grammalecte.el")
+(add-to-list 'load-path "~/.emacs.d/site-lisp/flycheck-grammalecte")
+(require 'flycheck-grammalecte)
 
 ;; (setq ispell-dictionary "francais")
 ;; (require 'ispell)
@@ -926,26 +960,26 @@ ad-do-it))))
 ;;        ))
 
 
-;(add-hook 'find-file-hooks 'auto-insert)
-;(setq auto-insert-directory (expand-file-name "~/.autoinsert/"))
-;(auto-insert-mode 1)
+					;(add-hook 'find-file-hooks 'auto-insert)
+					;(setq auto-insert-directory (expand-file-name "~/.autoinsert/"))
+					;(auto-insert-mode 1)
 
-;(setq auto-insert-query t) ;; prompt before insertion
+					;(setq auto-insert-query t) ;; prompt before insertion
 
-; (setq auto-insert-alist
-;       '(("\.c"  . "c-template.c")
-; 	("\.cc"   . "c-template.c")
-; 	("\.cpp"  . "c-template.c")
-; 	("\.h"  . "c-template.c")
-; 	("\.hh"  . "c-template.c")
-; 	("\.hpp" . "c-template.c")))
-
-
+					; (setq auto-insert-alist
+					;       '(("\.c"  . "c-template.c")
+					; 	("\.cc"   . "c-template.c")
+					; 	("\.cpp"  . "c-template.c")
+					; 	("\.h"  . "c-template.c")
+					; 	("\.hh"  . "c-template.c")
+					; 	("\.hpp" . "c-template.c")))
 
 
 
 
-    ;; auto-insert stuff
+
+
+;; auto-insert stuff
 (add-hook 'find-file-hooks 'auto-insert)
 (setq auto-insert-directory (concat (getenv "HOME") "/.emacs_auto/"))
 (setq auto-insert-alist
@@ -1103,15 +1137,6 @@ ad-do-it))))
 
 
 
-(setq c-default-style "linux")
-(setq c-basic-offset 4)
-(require 'cc-mode)
-
-;; well, this does the job (just modified the basic-offset)
-(add-to-list 'load-path "~/.emacs.d/site-lisp/google-c-style")
-(require 'google-c-style)
-(add-hook 'c-mode-common-hook 'google-set-c-style)
-(add-hook 'c-mode-common-hook 'google-make-newline-indent)
 
 
 ;;not bad for c++
@@ -1192,10 +1217,12 @@ ad-do-it))))
 ;; replace the `completion-at-point' and `complete-symbol' bindings in
 ;; irony-mode's buffers by irony-mode's function
 (defun my-irony-mode-hook ()
+  (yas-minor-mode 1)
+  (auto-complete-mode 1)
   (define-key irony-mode-map [remap completion-at-point]
-	      'irony-completion-at-point-async)
+    'irony-completion-at-point-async)
   (define-key irony-mode-map [remap complete-symbol]
-	      'irony-completion-at-point-async))
+    'irony-completion-at-point-async))
 (add-hook 'irony-mode-hook 'my-irony-mode-hook)
 (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
@@ -1479,7 +1506,11 @@ ad-do-it))))
 (require 'powerline)
 (powerline-default-theme)
 
-;(electric-indent-mode +1) ;a little annoying
+;; smart-mode-line
+;; (sml/setup)
+;; (setq sml/theme 'dark)
+
+					;(electric-indent-mode +1) ;a little annoying
 (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))
 (electric-pair-mode +1)
 

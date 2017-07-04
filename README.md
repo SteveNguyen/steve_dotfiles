@@ -29,6 +29,8 @@ required packages (M-x package-install):
 - aggressive-indent
 - helm-gtags (requires gnu global)
 - powerline
+- smart-mode-line
+- smart-mode-line-theme
 - highlight-indent-guides
 - yasnippet
 - org-bullets
