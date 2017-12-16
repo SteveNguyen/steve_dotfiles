@@ -27,8 +27,11 @@ required packages (M-x package-install):
 - browse-kill-ring+
 - py-autopep8 (python-autopep8)
 - aggressive-indent
+- clang-format
 - helm-gtags (requires gnu global)
-- powerline
+- powerline (https://github.com/powerline/fonts)
+- neotree
+- which-key
 - smart-mode-line
 - smart-mode-line-theme
 - highlight-indent-guides
