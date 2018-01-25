@@ -82,12 +82,13 @@
 ;; zone: screensaver 10min
 ;; (setq zone-timer (run-with-idle-timer 600 t 'zone))
 
-;; highlight current line (fucked in terminal???)
-(if window-system (global-hl-line-mode 1))
-(if window-system (set-face-background 'hl-line "#333"))
+
 
 ;;show in which function we are (tends to freeze with python)
 ;; (which-func-mode 1)
+
+;; fix dead keys?
+(require 'iso-transl)
 
 ;; line number at left?
 (global-linum-mode t)
@@ -231,6 +232,72 @@
 (global-set-key [s-left] 'tabbar-backward-tab)
 (global-set-key [s-right] 'tabbar-forward-tab)
 
+(setq tabbar-buffer-groups-function
+      (lambda ()
+	(list "All Buffers")))
+
+(setq *tabbar-ignore-buffers* '("flymake:."))
+
+(setq tabbar-buffer-list-function
+      (lambda ()
+	(remove-if
+	 (or (lambda(buffer)
+	       (find (aref (buffer-name buffer) 0) " *")
+	       ;; (string-match "^ *" (aref (buffer-name buffer) 0))
+	       )
+
+
+	     (loop for name in *tabbar-ignore-buffers* ;remove buffer name in this list.
+		   thereis (string-match name (buffer-name buffer))) ;;; WHY THE FUCK IT DOESN'T WORK? TODO
+
+	     ;; (lambda(buffer)
+	     ;;   (find (aref (buffer-name buffer) 0) " flymake")
+	     ;;   ;; (string-match "^ *" (aref (buffer-name buffer) 0))
+	     ;;   )
+
+	     )
+	 (buffer-list))
+	)
+      )
+
+;; Add a buffer modification state indicator in the tab label, and place a
+;; space around the label to make it looks less crowd.
+(defadvice tabbar-buffer-tab-label (after fixup_tab_label_space_and_flag activate)
+  (setq ad-return-value
+	(if (and (buffer-modified-p (tabbar-tab-value tab))
+		 (buffer-file-name (tabbar-tab-value tab)))
+	    (concat " + " (concat ad-return-value " "))
+	  (concat " " (concat ad-return-value " ")))))
+
+;; Called each time the modification state of the buffer changed.
+(defun ztl-modification-state-change ()
+  (tabbar-set-template tabbar-current-tabset nil)
+  (tabbar-display-update))
+
+;; First-change-hook is called BEFORE the change is made.
+(defun ztl-on-buffer-modification ()
+  (set-buffer-modified-p t)
+  (ztl-modification-state-change))
+(add-hook 'after-save-hook 'ztl-modification-state-change)
+
+;; This doesn't work for revert, I don't know.
+;;(add-hook 'after-revert-hook 'ztl-modification-state-change)
+(add-hook 'first-change-hook 'ztl-on-buffer-modification)
+
+
+(setq tabbar-background-color "gray80") ;; the color of the tabbar background
+(custom-set-faces
+ '(tabbar-default ((t (:inherit variable-pitch :background "gray60" :foreground "black" :weight bold))))
+ '(tabbar-button ((t (:inherit tabbar-default :foreground "gray80"))))
+ '(tabbar-button-highlight ((t (:inherit tabbar-default))))
+ '(tabbar-highlight ((t (:underline t))))
+ ;; '(tabbar-selected ((t (:inherit tabbar-default :background "#95CA59"))))
+ '(tabbar-selected ((t (:background "white" :foreground "black" :weight bold))))
+ ;; '(tabbar-selected ((t (:inherit tabbar-default))))
+ '(tabbar-separator ((t (:inherit tabbar-default :background "gray90"))))
+ '(tabbar-unselected ((t (:inherit tabbar-default)))))
+
+
 ;; tabbar/ruler
 (add-to-list 'load-path "~/.emacs.d/site-lisp/tabbar-ruler.el")
 (setq tabbar-ruler-global-tabbar t) ; If you want tabbar
@@ -238,7 +305,7 @@
 ;; (setq tabbar-ruler-popup-menu t) ; If you want a popup menu.
 ;; (setq tabbar-ruler-popup-toolbar t) ; If you want a popup toolbar
 ;; (setq tabbar-ruler-popup-scrollbar t) ; If you want to only show the
-                                      ; scroll bar when your mouse is moving. ; ; ; ; ; ;
+					; scroll bar when your mouse is moving. ; ; ; ; ; ;
 (require 'tabbar-ruler)
 
 ;; neotree (files in the left)
@@ -395,8 +462,6 @@ Position the cursor at it's beginning, according to the current mode."
 
 (global-set-key (kbd "C-c m") 'compile)
 
-;; for dead keys??
-;;(require 'iso-transl)
 
 ;; Hippie expand
 
@@ -584,7 +649,7 @@ ad-do-it))))
 (setq org-agenda-files '("~/Project/Repo/org"))
 
 
-;; org header bullets
+;; ;; org header bullets
 (font-lock-add-keywords 'org-mode
                         '(("^ +\\([-*]\\) "
                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
@@ -596,21 +661,32 @@ ad-do-it))))
 ;; restore the mouse yank
 (setcdr org-bullets-bullet-map nil)
 
-;; org italics
+;; ;; org italics
 (setq org-hide-emphasis-markers t)
 
 ;; org better header
+;; disactivate if using a theme
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(org-level-1 ((t (:inherit outline-1 :height 1.75))))
+;;  '(org-level-2 ((t (:inherit outline-2 :height 1.5))))
+;;  '(org-level-3 ((t (:inherit outline-3 :height 1.25))))
+;;  '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
+;;  '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-level-1 ((t (:inherit outline-1 :height 1.75))))
- '(org-level-2 ((t (:inherit outline-2 :height 1.5))))
- '(org-level-3 ((t (:inherit outline-3 :height 1.25))))
- '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
- '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
+ '(org-level-1 ((t (:inherit org-level-1 :height 1.75))))
+ '(org-level-2 ((t (:inherit org-level-2 :height 1.5))))
+ '(org-level-3 ((t (:inherit org-level-3 :height 1.25))))
+ '(org-level-4 ((t (:inherit org-level-4 :height 1.1))))
+ '(org-level-5 ((t (:inherit org-level-5 :height 1.0)))))
 
 
 (add-hook 'org-mode-hook
@@ -647,16 +723,18 @@ ad-do-it))))
 (global-set-key [down-mouse-3] 'imenu)
 
 
-;flymake latex syntax checking
+					;flymake latex syntax checking
 (require 'flymake)
 (defun flymake-get-tex-args (file-name)
-(list "pdflatex"
-(list "-file-line-error" "-draftmode" "-interaction=nonstopmode" file-name)))
+  (list "pdflatex"
+	(list "-file-line-error" "-draftmode" "-interaction=nonstopmode" file-name)))
 (add-hook 'LaTeX-mode-hook 'flymake-mode)
 
-;outline mode, allow section folding
+
+
+					;outline mode, allow section folding
 (defun turn-on-outline-minor-mode ()
-(outline-minor-mode 1))
+  (outline-minor-mode 1))
 (add-hook 'LaTeX-mode-hook 'turn-on-outline-minor-mode)
 (add-hook 'latex-mode-hook 'turn-on-outline-minor-mode)
 (setq outline-minor-mode-prefix "\C-c \C-o") ; Or something else
@@ -698,7 +776,9 @@ ad-do-it))))
 (company-auctex-init)
 (require 'company-bibtex)
 (add-to-list 'company-backends 'company-bibtex)
-
+(defun select-company-bibtex-bib (bib)
+  (interactive "f")
+  (setq company-bibtex-bibliography bib))
 
 ;; Python Hook
 (add-hook 'python-mode-hook
@@ -1276,7 +1356,6 @@ ad-do-it))))
 (add-hook 'after-init-hook 'global-company-mode)
 
 
-
 ;; =============
 ;; irony-mode
 ;; =============
@@ -1576,8 +1655,10 @@ ad-do-it))))
 
 ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
 ;; may have their own settings.
-(load-theme 'doom-vibrant t)
-;; (load-theme 'doom-vibrant t)
+;; (load-theme 'doom-one t)
+(load-theme 'doom-molokai t)
+(add-to-list 'custom-theme-load-path "~/.emacs.d/site-lisp/themes")
+(load-theme 'molokai-overrides t)
 
 ;; Enable flashing mode-line on errors
 (doom-themes-visual-bell-config)
@@ -1587,6 +1668,16 @@ ad-do-it))))
 
 ;; Corrects (and improves) org-mode's native fontification.
 (doom-themes-org-config)
+(doom-org-default-settings)
+
+
+;; highlight current line (fucked in terminal???)
+(if window-system (global-hl-line-mode 1))
+(if window-system (set-face-background 'hl-line "#444"))
+
+
+
+
 
 
 ;; Show line-number in the mode line
