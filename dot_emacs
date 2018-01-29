@@ -1428,8 +1428,9 @@ ad-do-it))))
 ;;     'company-backends 'company-rtags))
 ;; (setq rtags-autostart-diagnostics t)
 ;; (rtags-enable-standard-keybindings)
-(require 'rtags-helm)
+(require 'helm-rtags)
 (setq rtags-use-helm t)
+(setq rtags-display-result-backend 'helm)
 
 (define-key c-mode-base-map (kbd "M-t") (function rtags-find-symbol-at-point))
 (define-key c-mode-base-map (kbd "M-r") (function rtags-location-stack-back))
@@ -1668,7 +1669,7 @@ ad-do-it))))
 
 ;; Corrects (and improves) org-mode's native fontification.
 (doom-themes-org-config)
-(doom-org-default-settings)
+;; (doom-org-default-settings)
 
 
 ;; highlight current line (fucked in terminal???)

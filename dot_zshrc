@@ -121,9 +121,10 @@ alias makerware="env LC_ALL=\"en_US.UTF-8\" makerware"
 #VREP_STUFF
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/steve/divers/VREP/V-REP_PRO_EDU_V3_1_3_rev2b_64_Linux"
-source /opt/ros/indigo/setup.zsh
+# source /opt/ros/indigo/setup.zsh
 source /home/steve/Project/DEV/catkin_ws/devel/setup.zsh
 
+source /opt/ros/kinetic/setup.zsh
 
 
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
@@ -140,4 +141,7 @@ export BVSDIR=/home/steve/Project/DEV/BVS
 # export CCACHE_PREFIX=/usr/bin/distg++
 
 
-. /home/steve/torch/install/bin/torch-activate
+#. /home/steve/torch/install/bin/torch-activate
+
+# dbus worning with emacs?
+export NO_AT_BRIDGE=1
