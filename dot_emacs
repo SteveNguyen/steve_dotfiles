@@ -1,7 +1,15 @@
-(setq visible-bell t)
-(fset 'yes-or-no-p 'y-or-n-p)
+(setq warning-minimum-level :error)
+(setq gc-cons-threshold 100000000)
+(add-hook 'after-init-hook (lambda () (setq gc-cons-threshold 20000000))) ;;800000
 
-(setq initial-scratch-message "
+;; start wrap .emacs file
+(let ((file-name-handler-alist nil))
+
+  (modify-frame-parameters nil '((wait-for-wm . nil)))
+  (setq visible-bell t)
+  (fset 'yes-or-no-p 'y-or-n-p)
+
+  (setq initial-scratch-message "
       Small cheatsheet:
 
       C-c C-space : Ace jump
@@ -62,7 +70,7 @@
       M-s : find symbol
       M-i : symbol info
 
-      C-c ; : simultaneous edit different regions with same string
+      C-; : simultaneous edit different regions with same string
 
       C-x r l: list bookmarks
       C-x r m: add bookmark
@@ -70,518 +78,663 @@
 
       ")
 
+  ;; alias qrr for interactiv regexp replace
+  (defalias 'qrr 'query-replace-regexp)
+
+  ;; hide toolbar
+  ;; (tool-bar-mode -1)
+
+  (tool-bar-mode 0)
+  (menu-bar-mode 0)
+  (scroll-bar-mode 0)
+
+  (defun toggle-bars-view()
+    (interactive)
+    (if tool-bar-mode (tool-bar-mode 0) (tool-bar-mode 1))
+    (if menu-bar-mode (menu-bar-mode 0) (menu-bar-mode 1)))
+  (global-set-key [f12] 'toggle-bars-view)
+
+
+  ;; zone: screensaver 10min
+  ;; (setq zone-timer (run-with-idle-timer 600 t 'zone))
 
 
 
-;; alias qrr for interactiv regexp replace
-(defalias 'qrr 'query-replace-regexp)
+  ;;show in which function we are (tends to freeze with python)
+  ;; (which-func-mode 1)
 
-;; hide toolbar
-(tool-bar-mode -1)
+  ;; fix dead keys?
+  (require 'iso-transl)
 
-;; zone: screensaver 10min
-;; (setq zone-timer (run-with-idle-timer 600 t 'zone))
+  ;; line number at left?
+  (global-linum-mode t)
 
-
-
-;;show in which function we are (tends to freeze with python)
-;; (which-func-mode 1)
-
-;; fix dead keys?
-(require 'iso-transl)
-
-;; line number at left?
-(global-linum-mode t)
-
-;; delete the selection when DEL of C-y
-(delete-selection-mode 1)
-
-;; just remove the trailing whitespaces when saving
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-;; marmalade package repo
-(require 'package)
-(add-to-list 'package-archives
-    '("marmalade" .
-      "http://marmalade-repo.org/packages/"))
-
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
-(when (< emacs-major-version 24)
-  ;; For important compatibility libraries like cl-lib
-  (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-
-(package-initialize)
+  ;; delete the selection when DEL of C-y
+  (delete-selection-mode t)
 
 
-;; (let ((base "~/.emacs.d/"))
-;;   (add-to-list 'load-path base)
-;;   (dolist (f (directory-files base))
-;;     (let ((name (concat base "/" f)))
-;;       (when (and (file-directory-p name)
-;;                  (not (equal f ".."))
-;;                  (not (equal f ".")))
-;;         (add-to-list 'load-path name)))))
+  ;; just remove the trailing whitespaces when saving
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+  ;; marmalade package repo
+  (require 'package)
+  (add-to-list 'package-archives
+	       '("marmalade" .
+		 "http://marmalade-repo.org/packages/"))
+
+  (add-to-list 'package-archives
+	       '("melpa" . "https://melpa.org/packages/") t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+
+  ;; too long!
+  (package-initialize)
 
 
-;; Write backup files to own directory
-(setq backup-directory-alist
-      `(("." . ,(expand-file-name
-                 (concat user-emacs-directory "backups")))))
+  ;; (let ((base "~/.emacs.d/"))
+  ;;   (add-to-list 'load-path base)
+  ;;   (dolist (f (directory-files base))
+  ;;     (let ((name (concat base "/" f)))
+  ;;       (when (and (file-directory-p name)
+  ;;                  (not (equal f ".."))
+  ;;                  (not (equal f ".")))
+  ;;         (add-to-list 'load-path name)))))
 
 
-;; Make backups of files, even when they're in version control
-(setq vc-make-backup-files t)
+  ;; TODO
+  (require 'cheatsheet)
+  (cheatsheet-add :group 'Common
+		  :key "C-q"
+		  :description "leave Cheatsheet")
 
-;; Line wraping for text
-(add-hook 'text-mode-hook 'turn-on-visual-line-mode)
-(setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
+  (cheatsheet-add :group 'Common
+		  :key "C-M-n"
+		  :description "move forward over paren")
 
-;; Comment/uncomment block
-(defun comment-or-uncomment-region-or-line ()
-  "Comments or uncomments the region or the current line if there's no active region."
-  (interactive)
-  (let (beg end)
-    (if (region-active-p)
-	(setq beg (region-beginning) end (region-end))
-      (setq beg (line-beginning-position) end (line-end-position)))
-    (comment-or-uncomment-region beg end)))
+  (cheatsheet-add :group 'Common
+		  :key "C-M-p"
+		  :description "move backward over paren")
 
-;; (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
-;; (global-set-key (kbd "C-c u") 'uncomment-region)
+  (cheatsheet-add :group 'Navigation
+		  :key "M-p"
+		  :description "Ace window: move between windows")
 
-(global-set-key (kbd "C-c c") 'comment-or-uncomment-region-or-line)
-(global-set-key (kbd "C-c u") 'uncomment-region)
-
-;; /* */ comment style for c++?
-;; (defun my-c++-mode-hook ()
-;;   (c-set-style "stroustrup")
-;;   (set (make-local-variable 'comment-start) "/* ")
-;;   (set (make-local-variable 'comment-end) " */"))
-;; (add-hook 'c++-mode-hook 'my-c++-mode-hook)
+  (cheatsheet-add :group 'Navigation
+		  :key "C-S-s"
+		  :description "seach symbol at point")
 
 
-;; move cursor by camelCase
-(subword-mode 1)
+  (cheatsheet-add :group 'Edition
+		  :key "C-S-c C-S-c"
+		  :description "mc/edit-lines: Multiple cursors in region at begining")
 
-;; Cycle between snake case, camel case, etc.
-(require 'string-inflection)
-(global-set-key (kbd "C-c p") 'string-inflection-cycle)
-(global-set-key (kbd "C-c O") 'string-inflection-camelcase)        ;; Force to CamelCase
-(global-set-key (kbd "C-c o") 'string-inflection-lower-camelcase)  ;; Force to lowerCamelCase
-(global-set-key (kbd "C-c P") 'string-inflection-underscore-function)  ;; Force to underscore
+  (cheatsheet-add :group 'Edition
+		  :key "C-c C-<"
+		  :description "mc/mark-all-like-this: Multiple cursors in region at same char")
 
+  (cheatsheet-add :group 'Edition
+		  :key "C-<"
+		  :description "mc/mark-previous-like-this: Multiple cursors in previous line at same char")
 
-;; experimental super awesome nyan-mode
-(add-to-list 'load-path "~/.emacs.d/site-lisp/nyan-mode")
-(setq nyan-wavy-trail t)
-(require 'nyan-mode)
-
-;; Org to s5 html presentation
-;; (add-to-list 'load-path "~/.emacs.d/site-lisp/org-s5")
-;; (require 'org-s5)
+  (cheatsheet-add :group 'Edition
+		  :key "C->"
+		  :description "mc/mark-previous-like-this: Multiple cursors in next line at same char")
 
 
-(require 'ox-latex)
+  (cheatsheet-add :group 'Edition
+		  :key "C-x r"
+		  :description "vr/replace: visual replace regexp")
 
-;; help on keybindings (C-x)
-(require 'which-key)
-(which-key-mode)
+  (cheatsheet-add :group 'Edition
+		  :key "C-x q"
+		  :description "vr/query-replace: visual query-replace regexp")
+
+  (cheatsheet-add :group 'Edition
+		  :key "C-x m"
+		  :description "vr/mc-mark: visual mark multiple cursor regexp")
+
+  (cheatsheet-add :group 'Edition
+		  :key "C-c k"
+		  :description "copy line")
+
+  (cheatsheet-add :group 'Edition
+		  :key "C-x space"
+		  :description "rectangle selection")
+
+  (cheatsheet-add :group 'Edition
+		  :key "C-;"
+		  :description "iedit mode: simutaneous edit matching string at point")
 
 
-;; copy the current line
-(defun copy-line (arg)
-  "Copy lines (as many as prefix argument) in the kill ring.
+  (cheatsheet-add :group 'Org
+		  :key "C-c C-x C-l"
+		  :description "preview latex fragment")
+
+
+  (cheatsheet-add :group 'Org
+		  :key "C-c a"
+		  :description "agenda")
+
+
+
+  ;; Write backup files to own directory
+  (setq backup-directory-alist
+	`(("." . ,(expand-file-name
+		   (concat user-emacs-directory "backups")))))
+
+
+  ;; Make backups of files, even when they're in version control
+  (setq vc-make-backup-files t)
+
+  ;; Line wraping for text
+  (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
+  (setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
+
+
+
+  ;; Comment/uncomment block
+  (defun comment-or-uncomment-region-or-line ()
+    "Comments or uncomments the region or the current line if there's no active region."
+    (interactive)
+    (let (beg end)
+      (if (region-active-p)
+	  (setq beg (region-beginning) end (region-end))
+	(setq beg (line-beginning-position) end (line-end-position)))
+      (comment-or-uncomment-region beg end)))
+
+  ;; (global-set-key (kbd "C-c c") 'comment-or-uncomment-region)
+  ;; (global-set-key (kbd "C-c u") 'uncomment-region)
+
+  (global-set-key (kbd "C-c c") 'comment-or-uncomment-region-or-line)
+  (global-set-key (kbd "C-c u") 'uncomment-region)
+
+  ;; /* */ comment style for c++?
+  ;; (defun my-c++-mode-hook ()
+  ;;   (c-set-style "stroustrup")
+  ;;   (set (make-local-variable 'comment-start) "/* ")
+  ;;   (set (make-local-variable 'comment-end) " */"))
+  ;; (add-hook 'c++-mode-hook 'my-c++-mode-hook)
+
+
+  ;; move cursor by camelCase
+  (subword-mode 1)
+
+  ;; Cycle between snake case, camel case, etc.
+  (require 'string-inflection)
+  (global-set-key (kbd "C-c p") 'string-inflection-cycle)
+  (global-set-key (kbd "C-c O") 'string-inflection-camelcase)        ;; Force to CamelCase
+  (global-set-key (kbd "C-c o") 'string-inflection-lower-camelcase)  ;; Force to lowerCamelCase
+  (global-set-key (kbd "C-c P") 'string-inflection-underscore-function)  ;; Force to underscore
+
+
+  ;; experimental super awesome nyan-mode
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/nyan-mode")
+  (setq nyan-wavy-trail t)
+  (require 'nyan-mode)
+
+  ;; Org to s5 html presentation
+  ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/org-s5")
+  ;; (require 'org-s5)
+
+  (require 'org)
+  ;; export from org to latex
+  (require 'ox-latex)
+  (setq org-latex-create-formula-image-program 'dvipng)
+  (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
+
+  ;;bigger latex preview in org
+  (setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+
+  ;;quick and simple local bookmarks
+  (require 'bm)
+  (global-set-key (kbd "C-b") 'bm-toggle)
+  (global-set-key (kbd "S-<down>")   'bm-next)
+  (global-set-key (kbd "S-<up>") 'bm-previous)
+
+  ;; help on keybindings (C-x)
+  (require 'which-key)
+  (which-key-mode)
+
+  ;; visuel seach and replace
+  (require 'visual-regexp)
+  (define-key global-map (kbd "C-x r") 'vr/replace)
+  (define-key global-map (kbd "C-x q") 'vr/query-replace)
+  ;; mark for multiple cursor
+  (define-key global-map (kbd "C-x m") 'vr/mc-mark)
+
+  ;; seach symbol at point
+  (global-set-key (kbd "C-S-s") 'isearch-forward-symbol-at-point)
+
+
+  ;; Highlight symbols
+  ;; (add-hook 'prog-mode-hook (lambda () (highlight-symbol-mode)))
+  ;; (setq highlight-symbol-on-navigation-p t)
+  ;; (global-set-key [f3] 'highlight-symbol-next)
+  ;; (global-set-key [(shift f3)] 'highlight-symbol-prev)
+
+  ;; Copy The current line
+  (defun copy-line (arg)
+    "Copy lines (as many as prefix argument) in the kill ring.
       Ease of use features:
       - Move to start of next line.
       - Appends the copy on sequential calls.
       - Use newline as last char even on the last line of the buffer.
       - If region is active, copy its lines."
-  (interactive "p")
-  (let ((beg (line-beginning-position))
-	(end (line-end-position arg)))
-    (when mark-active
-      (if (> (point) (mark))
-	  (setq beg (save-excursion (goto-char (mark)) (line-beginning-position)))
-	(setq end (save-excursion (goto-char (mark)) (line-end-position)))))
-    (if (eq last-command 'copy-line)
-	(kill-append (buffer-substring beg end) (< end beg))
-      (kill-ring-save beg end)))
-  (kill-append "\n" nil)
-  (beginning-of-line (or (and arg (1+ arg)) 2))
-  (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
+    (interactive "p")
+    (let ((beg (line-beginning-position))
+	  (end (line-end-position arg)))
+      (when mark-active
+	(if (> (point) (mark))
+	    (setq beg (save-excursion (goto-char (mark)) (line-beginning-position)))
+	  (setq end (save-excursion (goto-char (mark)) (line-end-position)))))
+      (if (eq last-command 'copy-line)
+	  (kill-append (buffer-substring beg end) (< end beg))
+	(kill-ring-save beg end)))
+    (kill-append "\n" nil)
+    (beginning-of-line (or (and arg (1+ arg)) 2))
+    (if (and arg (not (= 1 arg))) (message "%d lines copied" arg)))
 
-;; set key binding
-(global-set-key (kbd "C-c C-k") 'copy-line)
+  ;; set key binding
+  (global-set-key (kbd "C-c C-k") 'copy-line)
 
-;; Browse the kill ring+ M-x package install browse-kill-ring+
-(require 'browse-kill-ring+)
-(global-set-key (kbd "C-x C-y") 'browse-kill-ring)
+  ;; Browse the kill ring+ M-x package install browse-kill-ring+
+  (require 'browse-kill-ring+)
+  (global-set-key (kbd "C-x C-y") 'browse-kill-ring)
 
-;; undo tree
-(add-to-list 'load-path "~/.emacs.d/site-lisp/undo-tree")
-(require 'undo-tree)
-(global-undo-tree-mode)
-(defalias 'redo 'undo-tree-redo)
-(global-set-key (kbd "C-8") 'redo)
+  ;; undo tree
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/undo-tree")
+  (require 'undo-tree)
+  (global-undo-tree-mode)
+  (defalias 'redo 'undo-tree-redo)
+  (global-set-key (kbd "C-8") 'redo)
 
 
-;; tabbar
-(add-to-list 'load-path "~/.emacs.d/site-lisp/tabbar")
-(require 'tabbar)
-(global-set-key [s-left] 'tabbar-backward-tab)
-(global-set-key [s-right] 'tabbar-forward-tab)
+  ;; tabbar
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/tabbar")
+  (require 'tabbar)
+  (global-set-key [s-left] 'tabbar-backward-tab)
+  (global-set-key [s-right] 'tabbar-forward-tab)
 
-(setq tabbar-buffer-groups-function
-      (lambda ()
-	(list "All Buffers")))
+  (setq tabbar-buffer-groups-function
+	(lambda ()
+	  (list "All Buffers")))
 
-(setq *tabbar-ignore-buffers* '("flymake:."))
+  (setq *tabbar-ignore-buffers* '("flymake:."))
 
-(setq tabbar-buffer-list-function
-      (lambda ()
-	(remove-if
-	 (or (lambda(buffer)
-	       (find (aref (buffer-name buffer) 0) " *")
-	       ;; (string-match "^ *" (aref (buffer-name buffer) 0))
+  (setq tabbar-buffer-list-function
+	(lambda ()
+	  (remove-if
+	   (or (lambda(buffer)
+		 (find (aref (buffer-name buffer) 0) " *")
+		 ;; (string-match "^ *" (aref (buffer-name buffer) 0))
+		 )
+
+
+	       (loop for name in *tabbar-ignore-buffers* ;remove buffer name in this list.
+		     thereis (string-match name (buffer-name buffer))) ;;; WHY THE FUCK IT DOESN'T WORK? TODO
+
+	       ;; (lambda(buffer)
+	       ;;   (find (aref (buffer-name buffer) 0) " flymake")
+	       ;;   ;; (string-match "^ *" (aref (buffer-name buffer) 0))
+	       ;;   )
+
 	       )
-
-
-	     (loop for name in *tabbar-ignore-buffers* ;remove buffer name in this list.
-		   thereis (string-match name (buffer-name buffer))) ;;; WHY THE FUCK IT DOESN'T WORK? TODO
-
-	     ;; (lambda(buffer)
-	     ;;   (find (aref (buffer-name buffer) 0) " flymake")
-	     ;;   ;; (string-match "^ *" (aref (buffer-name buffer) 0))
-	     ;;   )
-
-	     )
-	 (buffer-list))
+	   (buffer-list))
+	  )
 	)
-      )
 
-;; Add a buffer modification state indicator in the tab label, and place a
-;; space around the label to make it looks less crowd.
-(defadvice tabbar-buffer-tab-label (after fixup_tab_label_space_and_flag activate)
-  (setq ad-return-value
-	(if (and (buffer-modified-p (tabbar-tab-value tab))
-		 (buffer-file-name (tabbar-tab-value tab)))
-	    (concat " + " (concat ad-return-value " "))
-	  (concat " " (concat ad-return-value " ")))))
+  ;; Add a buffer modification state indicator in the tab label, and place a
+  ;; space around the label to make it looks less crowd.
+  (defadvice tabbar-buffer-tab-label (after fixup_tab_label_space_and_flag activate)
+    (setq ad-return-value
+	  (if (and (buffer-modified-p (tabbar-tab-value tab))
+		   (buffer-file-name (tabbar-tab-value tab)))
+	      (concat " + " (concat ad-return-value " "))
+	    (concat " " (concat ad-return-value " ")))))
 
-;; Called each time the modification state of the buffer changed.
-(defun ztl-modification-state-change ()
-  (tabbar-set-template tabbar-current-tabset nil)
-  (tabbar-display-update))
+  ;; Called each time the modification state of the buffer changed.
+  (defun ztl-modification-state-change ()
+    (tabbar-set-template tabbar-current-tabset nil)
+    (tabbar-display-update))
 
-;; First-change-hook is called BEFORE the change is made.
-(defun ztl-on-buffer-modification ()
-  (set-buffer-modified-p t)
-  (ztl-modification-state-change))
-(add-hook 'after-save-hook 'ztl-modification-state-change)
+  ;; First-change-hook is called BEFORE the change is made.
+  (defun ztl-on-buffer-modification ()
+    (set-buffer-modified-p t)
+    (ztl-modification-state-change))
+  (add-hook 'after-save-hook 'ztl-modification-state-change)
 
-;; This doesn't work for revert, I don't know.
-;;(add-hook 'after-revert-hook 'ztl-modification-state-change)
-(add-hook 'first-change-hook 'ztl-on-buffer-modification)
-
-
-(setq tabbar-background-color "gray80") ;; the color of the tabbar background
-(custom-set-faces
- '(tabbar-default ((t (:inherit variable-pitch :background "gray60" :foreground "black" :weight bold))))
- '(tabbar-button ((t (:inherit tabbar-default :foreground "gray80"))))
- '(tabbar-button-highlight ((t (:inherit tabbar-default))))
- '(tabbar-highlight ((t (:underline t))))
- ;; '(tabbar-selected ((t (:inherit tabbar-default :background "#95CA59"))))
- '(tabbar-selected ((t (:background "white" :foreground "black" :weight bold))))
- ;; '(tabbar-selected ((t (:inherit tabbar-default))))
- '(tabbar-separator ((t (:inherit tabbar-default :background "gray90"))))
- '(tabbar-unselected ((t (:inherit tabbar-default)))))
+  ;; This doesn't work for revert, I don't know.
+  ;;(add-hook 'after-revert-hook 'ztl-modification-state-change)
+  (add-hook 'first-change-hook 'ztl-on-buffer-modification)
 
 
-;; tabbar/ruler
-(add-to-list 'load-path "~/.emacs.d/site-lisp/tabbar-ruler.el")
-(setq tabbar-ruler-global-tabbar t) ; If you want tabbar
-;; (setq tabbar-ruler-global-ruler t) ; if you want a global ruler
-;; (setq tabbar-ruler-popup-menu t) ; If you want a popup menu.
-;; (setq tabbar-ruler-popup-toolbar t) ; If you want a popup toolbar
-;; (setq tabbar-ruler-popup-scrollbar t) ; If you want to only show the
+  (setq tabbar-background-color "gray80") ;; the color of the tabbar background
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(org-level-1 ((t (:inherit org-level-1 :height 1.75))))
+   '(org-level-2 ((t (:inherit org-level-2 :height 1.5))))
+   '(org-level-3 ((t (:inherit org-level-3 :height 1.25))))
+   '(org-level-4 ((t (:inherit org-level-4 :height 1.1))))
+   '(org-level-5 ((t (:inherit org-level-5 :height 1.0))))
+   '(tabbar-button ((t (:inherit tabbar-default :foreground "gray80"))))
+   '(tabbar-button-highlight ((t (:inherit tabbar-default))))
+   '(tabbar-default ((t (:inherit variable-pitch :background "gray60" :foreground "black" :weight bold))))
+   '(tabbar-highlight ((t (:underline t))))
+   '(tabbar-selected ((t (:background "white" :foreground "black" :weight bold))))
+   '(tabbar-separator ((t (:inherit tabbar-default :background "gray90"))))
+   '(tabbar-unselected ((t (:inherit tabbar-default)))))
+
+
+  ;; tabbar/ruler
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/tabbar-ruler.el")
+  (setq tabbar-ruler-global-tabbar t) ; If you want tabbar
+  ;; (setq tabbar-ruler-global-ruler t) ; if you want a global ruler
+  ;; (setq tabbar-ruler-popup-menu t) ; If you want a popup menu.
+  ;; (setq tabbar-ruler-popup-toolbar t) ; If you want a popup toolbar
+  ;; (setq tabbar-ruler-popup-scrollbar t) ; If you want to only show the
 					; scroll bar when your mouse is moving. ; ; ; ; ; ;
-(require 'tabbar-ruler)
+  (require 'tabbar-ruler)
 
-;; neotree (files in the left)
-(require 'neotree)
-(global-set-key [f8] 'neotree-toggle)
+  ;; neotree (files in the left)
+  (require 'neotree)
+  (global-set-key [f8] 'neotree-toggle)
 
 
-;; move through windows
+  ;; move through windows
 					;Enable winner-mode
-(winner-mode t)
+  (winner-mode t)
 
+  ;; ace window to switch between windows
+  (global-set-key (kbd "M-p") 'ace-window)
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+
+
+  ;; prevent new window frame
+  ;; (setq pop-up-frames nil)
+  ;; (setq pop-up-windows nil)
+  (setq use-dialog-box nil)
 					;Enable windmove
-;; (windmove-default-keybindings)
-(windmove-default-keybindings 'meta)
+  ;; (windmove-default-keybindings)
+  (windmove-default-keybindings 'meta)
 
-;; indication of the 70 char colum
-(add-to-list 'load-path "~/.emacs.d/site-lisp/fill-column-indicator")
-(require 'fill-column-indicator)
-;; (define-globalized-minor-mode
-;;  global-fci-mode fci-mode (lambda () (fci-mode 1)))
-;; (global-fci-mode t)
+  ;; eyebrowse window management
+  ;; (eyebrowse-mode t)
 
+  ;;column indicator
+  ;; indication of the 70 char colum
 
-;; tab completion. Sometimes...
-(setq tab-always-indent 'complete)
-(add-to-list 'completion-styles 'initials t)
-
-;; auto-complete
-(require 'auto-complete)
-;; (global-auto-complete-mode t)
-(require 'auto-complete-config)
-;; (ac-config-default)
-
-;; yasnippet
-(require 'yasnippet)
-;; (yas-global-mode 1)
-
-;; Save point position between sessions
-(require 'saveplace)
-(setq-default save-place t)
-(setq save-place-file (expand-file-name ".places" user-emacs-directory))
-
-;; ==== Save command histories ====
-
-;; See
-;; http://stackoverflow.com/questions/1229142/how-can-i-save-my-mini-buffer-history-in-emacs
-(setq savehist-additional-variables
-      '(kill-ring search-ring regexp-search-ring))
-(setq savehist-file "~/.emacs.d/savehist")
-(savehist-mode 1)
+  ;; (require 'fill-column-indicator)
+  ;; (define-globalized-minor-mode global-fci-mode fci-mode
+  ;;   (lambda ()
+  ;;     (if (and
+  ;;          (not (string-match "^\*.*\*$" (buffer-name)))
+  ;;          (not (eq major-mode 'dired-mode)))
+  ;;         (fci-mode 1))))
+  ;; (global-fci-mode 1)
 
 
 
-;; ace jump mode major function
-(add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode.el")
-(require 'ace-jump-mode)
-(autoload
-  'ace-jump-mode
-  "ace-jump-mode"
-  "Emacs quick move minor mode"
-  t)
-;; you can select the key you prefer to
-;; (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
-(global-set-key (kbd "C-c C-SPC") 'ace-jump-mode)
 
-(autoload
-  'ace-jump-mode-pop-mark
-  "ace-jump-mode"
-  "Ace jump back:-)"
-  t)
-(eval-after-load "ace-jump-mode"
-  '(ace-jump-mode-enable-mark-sync))
-(global-set-key (kbd "C-x C-SPC") 'ace-jump-mode-pop-mark)
+  ;; tab completion. Sometimes...
+  (setq tab-always-indent 'complete)
+  (add-to-list 'completion-styles 'initials t)
 
-(defun smart-open-line ()
-  "Insert an empty line after the current line.
+  ;; auto-complete
+  (require 'auto-complete)
+  ;; (global-auto-complete-mode t)
+  (require 'auto-complete-config)
+  ;; (ac-config-default)
+
+  ;; yasnippet
+  (require 'yasnippet)
+  ;; (yas-global-mode 1)
+
+  ;; Save point position between sessions
+  (require 'saveplace)
+  (setq-default save-place t)
+  (setq save-place-file (expand-file-name ".places" user-emacs-directory))
+
+  ;; ==== Save command histories ====
+
+  ;; See
+  ;; http://stackoverflow.com/questions/1229142/how-can-i-save-my-mini-buffer-history-in-emacs
+  (setq savehist-additional-variables
+	'(kill-ring search-ring regexp-search-ring))
+  (setq savehist-file "~/.emacs.d/savehist")
+  (savehist-mode 1)
+
+
+
+  ;; ace jump mode major function
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode.el")
+  (require 'ace-jump-mode)
+  (autoload
+    'ace-jump-mode
+    "ace-jump-mode"
+    "Emacs quick move minor mode"
+    t)
+  ;; you can select the key you prefer to
+  ;; (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+  (global-set-key (kbd "C-c C-SPC") 'ace-jump-mode)
+
+  (autoload
+    'ace-jump-mode-pop-mark
+    "ace-jump-mode"
+    "Ace jump back:-)"
+    t)
+  (eval-after-load "ace-jump-mode"
+    '(ace-jump-mode-enable-mark-sync))
+  (global-set-key (kbd "C-x C-SPC") 'ace-jump-mode-pop-mark)
+
+  (defun smart-open-line ()
+    "Insert an empty line after the current line.
 Position the cursor at its beginning, according to the current mode."
-  (interactive)
-  (move-end-of-line nil)
-  (newline-and-indent))
+    (interactive)
+    (move-end-of-line nil)
+    (newline-and-indent))
 
-(defun smart-open-line-above ()
-  "Insert an empty line above the current line.
+  (defun smart-open-line-above ()
+    "Insert an empty line above the current line.
 Position the cursor at it's beginning, according to the current mode."
-  (interactive)
-  (move-beginning-of-line nil)
-  (newline-and-indent)
-  (forward-line -1)
-  (indent-according-to-mode))
+    (interactive)
+    (move-beginning-of-line nil)
+    (newline-and-indent)
+    (forward-line -1)
+    (indent-according-to-mode))
 
-(global-set-key [(control shift return)] 'smart-open-line-above)
-(global-set-key [(shift return)] 'smart-open-line)
-
-
-
-;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
-;; nope
-;; (afp-setup-recommended-hooks)
-;; better
-(add-to-list 'load-path "~/.emacs.d/site-lisp/filladapt")
-(require 'filladapt)
-(add-hook 'text-mode-hook 'turn-on-filladapt-mode)
+  (global-set-key [(control shift return)] 'smart-open-line-above)
+  (global-set-key [(shift return)] 'smart-open-line)
 
 
 
-;; ;; ace jump mode major function
-;; (add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode")
-;; (require 'ace-jump-mode)
-;; (autoload
-;;   'ace-jump-mode
-;;   "ace-jump-mode"
-;;   "Emacs quick move minor mode"
-;;   t)
-;; (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
-
-;; (eval-after-load "ace-jump-mode"
-;;   '(ace-jump-mode-enable-mark-sync))
-;; (define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
-
-
-;; compile mode
-;; Close the compilation window if there was no error at all.
-;; (setq compilation-exit-message-function
-;;       (lambda (status code msg)
-;;         ;; If M-x compile exists with a 0
-;;         (when (and (eq status 'exit) (zerop code))
-;;           ;; then bury the *compilation* buffer, so that C-x b doesn't go there
-;; 	  (bury-buffer "*compilation*")
-;; 	  ;; and return to whatever were looking at before
-;; 	  (replace-buffer-in-windows "*compilation*"))
-;;         ;; Always return the anticipated result of compilation-exit-message-function
-;; 	(cons msg code)))
-
-
-;; (defun bury-compile-buffer-if-successful (buffer string)
-;;   "Bury a compilation buffer if succeeded without warnings "
-;;   (if (and
-;;        (string-match "compilation" (buffer-name buffer))
-;;        (string-match "finished" string)
-;;        (not
-;;         (with-current-buffer buffer
-;;           (search-forward "warning" nil t))))
-;;       (run-with-timer 1 nil
-;;                       (lambda (buf)
-;;                         (bury-buffer buf)
-;;                         (switch-to-prev-buffer (get-buffer-window buf) 'kill))
-;;                       buffer)))
-
-(defun kill-compile-buffer (buffer string)
-  (kill-buffer-and-window)
-  )
-
-(add-hook 'compilation-finish-functions 'kill-compile-buffer)
-
-(global-set-key (kbd "C-c m") 'compile)
-
-
-;; Hippie expand
-
-(add-to-list 'load-path "~/.emacs.d/site-lisp/hippie-expand")
-(global-set-key (kbd "C-!") 'hippie-expand)
-(global-set-key (kbd "C-:") 'hippie-expand-no-case-fold)
-(global-set-key (kbd "C-;") 'hippie-expand-lines)
-
-;; google translate
-(add-to-list 'load-path "~/.emacs.d/site-lisp/google-translate")
-(require 'google-translate)
-(global-set-key (kbd "C-c T") 'google-translate-at-point)
-(global-set-key (kbd "C-c t") 'google-translate-query-translate)
-(global-set-key (kbd "C-c R") 'google-translate-at-point-reverse)
-(global-set-key (kbd "C-c r") 'google-translate-query-translate-reverse)
-
-(setq google-translate-default-target-language "en")
-(setq google-translate-default-source-language "fr")
-(setq google-translate-enable-ido-completion t)
+  ;; (add-hook 'text-mode-hook 'turn-on-auto-fill)
+  ;; nope
+  ;; (afp-setup-recommended-hooks)
+  ;; better
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/filladapt")
+  (require 'filladapt)
+  (add-hook 'text-mode-hook 'turn-on-filladapt-mode)
 
 
 
-;; magit, for git...
-;; (add-to-l;; ist 'load-path "~/.emacs.d/site-lisp/elpa/cl-lib-0.2/")
-;; (require 'cl-lib)
-;; (add-to-list 'load-path "~/.emacs.d/site-lisp/magit")
-;; (require 'magit)
+  ;; ;; ace jump mode major function
+  ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/ace-jump-mode")
+  ;; (require 'ace-jump-mode)
+  ;; (autoload
+  ;;   'ace-jump-mode
+  ;;   "ace-jump-mode"
+  ;;   "Emacs quick move minor mode"
+  ;;   t)
+  ;; (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+
+  ;; (eval-after-load "ace-jump-mode"
+  ;;   '(ace-jump-mode-enable-mark-sync))
+  ;; (define-key global-map (kbd "C-x SPC") 'ace-jump-mode-pop-mark)
 
 
-;; indent
-
-(defun indent-buffer ()
-  "Indent the currently visited buffer."
-  (interactive)
-  (indent-region (point-min) (point-max)))
-
-(defun indent-region-or-buffer ()
-  "Indent a region if selected, otherwise the whole buffer."
-  (interactive)
-  (save-excursion
-    (if (region-active-p)
-        (progn
-          (indent-region (region-beginning) (region-end))
-          (message "Indented selected region."))
-      (progn
-        (indent-buffer)
-        (message "Indented buffer.")))))
-
-(global-set-key (kbd "C-c i") 'indent-region-or-buffer)
-
-;; highlight indentation
-(add-to-list 'load-path "~/.emacs.d/site-lisp/Highlight-Indentation-for-Emacs")
-(require 'highlight-indentation)
-;; (set-face-background 'highlight-indentation-face "#696969")
-;; (set-face-background 'highlight-indentation-current-column-face "#a9a9a9")
-(set-face-background 'highlight-indentation-face "#2f4f4f")
-(set-face-background 'highlight-indentation-current-column-face "#708090")
-(add-hook 'python-mode-hook 'highlight-indentation-mode)
-(add-hook 'python-mode-hook 'highlight-indentation-current-column-mode)
-
-;;pas mal
-;; (add-to-list 'load-path "~/.emacs.d/site-lisp/indent-hint")
-;; (require 'visual-indentation-mode)
+  ;; compile mode
+  ;; Close the compilation window if there was no error at all.
+  ;; (setq compilation-exit-message-function
+  ;;       (lambda (status code msg)
+  ;;         ;; If M-x compile exists with a 0
+  ;;         (when (and (eq status 'exit) (zerop code))
+  ;;           ;; then bury the *compilation* buffer, so that C-x b doesn't go there
+  ;; 	  (bury-buffer "*compilation*")
+  ;; 	  ;; and return to whatever were looking at before
+  ;; 	  (replace-buffer-in-windows "*compilation*"))
+  ;;         ;; Always return the anticipated result of compilation-exit-message-function
+  ;; 	(cons msg code)))
 
 
-;; ibuffer, can be usefull
-(require 'ibuffer)
-(global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
-(setq ibuffer-default-sorting-mode 'major-mode)
+  ;; (defun bury-compile-buffer-if-successful (buffer string)
+  ;;   "Bury a compilation buffer if succeeded without warnings "
+  ;;   (if (and
+  ;;        (string-match "compilation" (buffer-name buffer))
+  ;;        (string-match "finished" string)
+  ;;        (not
+  ;;         (with-current-buffer buffer
+  ;;           (search-forward "warning" nil t))))
+  ;;       (run-with-timer 1 nil
+  ;;                       (lambda (buf)
+  ;;                         (bury-buffer buf)
+  ;;                         (switch-to-prev-buffer (get-buffer-window buf) 'kill))
+  ;;                       buffer)))
 
-;; multiple-cursors
-(add-to-list 'load-path "~/.emacs.d/site-lisp/multiple-cursors")
-(require 'multiple-cursors)
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+  (defun kill-compile-buffer (buffer string)
+    (kill-buffer-and-window)
+    )
 
-;(require 'tex-site)
-;;(require 'psvn)
-;; (add-to-list 'vc-handled-backends 'SVN)
+  (add-hook 'compilation-finish-functions 'kill-compile-buffer)
+
+  (global-set-key (kbd "C-c m") 'compile)
 
 
-;; marker-visit, easily navigate through markers
-(add-to-list 'load-path "~/.emacs.d/site-lisp/marker-visit")
-(require 'marker-visit)
-(global-set-key (kbd "S-<up>") 'marker-visit-prev)
-(global-set-key (kbd "S-<down>") 'marker-visit-next)
+  ;; Hippie expand
 
-;; visible mark
-(add-to-list 'load-path "~/.emacs.d/site-lisp/visible-mark")
+  ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/hippie-expand")
+  ;; (global-set-key (kbd "C-!") 'hippie-expand)
+  ;; (global-set-key (kbd "C-:") 'hippie-expand-no-case-fold)
+  ;; (global-set-key (kbd "C-;") 'hippie-expand-lines)
 
-(defface visible-mark-active ;; put this before (require 'visible-mark)
-  '((((type tty) (class mono)))
-    (t (:background "magenta"))) "")
-(setq visible-mark-max 2)
-(setq visible-mark-faces `(visible-mark-face1 my-visible-mark-face2))
+  ;; google translate
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/google-translate")
+  (require 'google-translate)
+  (global-set-key (kbd "C-c T") 'google-translate-at-point)
+  (global-set-key (kbd "C-c t") 'google-translate-query-translate)
+  (global-set-key (kbd "C-c R") 'google-translate-at-point-reverse)
+  (global-set-key (kbd "C-c r") 'google-translate-query-translate-reverse)
 
-(require 'visible-mark)
-(global-visible-mark-mode 1)
+  (setq google-translate-default-target-language "en")
+  (setq google-translate-default-source-language "fr")
+  (setq google-translate-enable-ido-completion t)
 
 
 
 
-;; helm TODO: one day switch ido/smex to helm
-;; (add-to-list 'load-path "~/.emacs.d/site-lisp/helm")
-;; (require 'helm-config)
-;; (global-set-key (kbd "C-c h") 'helm-mini)
-;; (helm-mode 1)
+
+  ;; magit, for git...
+  ;; (add-to-l;; ist 'load-path "~/.emacs.d/site-lisp/elpa/cl-lib-0.2/")
+  ;; (require 'cl-lib)
+  ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/magit")
+  ;; (require 'magit)
+
+
+  ;; indent
+
+  (defun indent-buffer ()
+    "Indent the currently visited buffer."
+    (interactive)
+    (indent-region (point-min) (point-max)))
+
+  (defun indent-region-or-buffer ()
+    "Indent a region if selected, otherwise the whole buffer."
+    (interactive)
+    (save-excursion
+      (if (region-active-p)
+	  (progn
+	    (indent-region (region-beginning) (region-end))
+	    (message "Indented selected region."))
+	(progn
+	  (indent-buffer)
+	  (message "Indented buffer.")))))
+
+  (global-set-key (kbd "C-c i") 'indent-region-or-buffer)
+
+  ;; highlight indentation
+  ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/Highlight-Indentation-for-Emacs")
+  ;; (require 'highlight-indentation)
+  ;; (set-face-background 'highlight-indentation-face "#696969")
+  ;; (set-face-background 'highlight-indentation-current-column-face "#a9a9a9")
+
+  ;; (set-face-background 'highlight-indentation-face "#2f4f4f")
+  ;; (set-face-background 'highlight-indentation-current-column-face "#708090")
+  ;; (add-hook 'python-mode-hook 'highlight-indentation-mode)
+  ;; (add-hook 'python-mode-hook 'highlight-indentation-current-column-mode)
+  ;;ICI
+  ;;pas mal
+  ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/indent-hint")
+  ;; (require 'visual-indentation-mode)
+
+
+  ;; ibuffer, can be usefull
+  (require 'ibuffer)
+  (global-set-key (kbd "C-x C-b") 'ibuffer-other-window)
+  (setq ibuffer-default-sorting-mode 'major-mode)
+
+  ;; multiple-cursors
+  (add-to-list 'load-path "~/.emacs.d/site-lisp/multiple-cursors")
+  (require 'multiple-cursors)
+  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+					;(require 'tex-site)
+  ;;(require 'psvn)
+  ;; (add-to-list 'vc-handled-backends 'SVN)
+
+
+  ;; marker-visit, easily navigate through markers
+  ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/marker-visit")
+  ;; (require 'marker-visit)
+  ;; (global-set-key (kbd "S-<up>") 'marker-visit-prev)
+  ;; (global-set-key (kbd "S-<down>") 'marker-visit-next)
+
+  ;; visible mark (bof)
+  ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/visible-mark")
+
+  ;; (defface visible-mark-active ;; put this before (require 'visible-mark)
+  ;;   '((((type tty) (class mono)))
+  ;;     (t (:background "magenta"))) "")
+  ;; (setq visible-mark-max 1)
+  ;; (setq visible-mark-faces `(visible-mark-face1 visible-mark-face2))
+
+  ;; (require 'visible-mark)
+  ;; (global-visible-mark-mode 1)
 
 
 
-;; ido completion. Much better
-(require 'ido)
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
 
-(defvar ido-enable-replace-completing-read t
-"If t, use ido-completing-read instead of completing-read if possible.
+  ;; helm TODO: one day switch ido/smex to helm
+  ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/helm")
+  ;; (require 'helm-config)
+  ;; (global-set-key (kbd "C-c h") 'helm-mini)
+  ;; (helm-mode 1)
+
+
+
+  ;; ido completion. Much better
+  (require 'ido)
+  (setq ido-enable-flex-matching t)
+  (setq ido-everywhere t)
+  (ido-mode 1)
+
+  (defvar ido-enable-replace-completing-read t
+    "If t, use ido-completing-read instead of completing-read if possible.
 
 Set it to nil using let in around-advice for functions where the
 original completing-read is required.  For example, if a function
@@ -589,23 +742,34 @@ foo absolutely must use the original completing-read, define some
 advice lik this:
 
 (defadvice foo (around original-completing-read-only activate)
-(let (ido-enable-replace-completing-read) ad-do-it))")
+  (let (ido-enable-replace-completing-read) ad-do-it))")
 
 ;; Replace completing-read wherever possible, unless directed otherwise
 (defadvice completing-read
-(around use-ido-when-possible activate)
-(if (or (not ido-enable-replace-completing-read) ; Manual override disable ido
-(and (boundp 'ido-cur-list)
-ido-cur-list)) ; Avoid infinite loop from ido calling this
-ad-do-it
-(let ((allcomp (all-completions "" collection predicate)))
-(if allcomp
-(setq ad-return-value
-(ido-completing-read prompt
-allcomp
-nil require-match initial-input hist def))
-ad-do-it))))
+    (around use-ido-when-possible activate)
+  (if (or (not ido-enable-replace-completing-read) ; Manual override disable ido
+	  (and (boundp 'ido-cur-list)
+	       ido-cur-list)) ; Avoid infinite loop from ido calling this
+      ad-do-it
+    (let ((allcomp (all-completions "" collection predicate)))
+      (if allcomp
+	  (setq ad-return-value
+		(ido-completing-read prompt
+				     allcomp
+				     nil require-match initial-input hist def))
+	ad-do-it))))
 
+
+
+
+;; should enhance ido matching... Not clear
+;; (require 'flx-ido)
+;; ;; (ido-mode 1)
+;; ;; (ido-everywhere 1)
+;; (flx-ido-mode 1)
+;; ;; disable ido faces to see flx highlights.
+;; (setq ido-enable-flex-matching t)
+;; (setq ido-use-faces nil)
 
 
 ;;and smex (goes with ido)
@@ -677,16 +841,7 @@ ad-do-it))))
 ;;  '(org-level-4 ((t (:inherit outline-4 :height 1.1))))
 ;;  '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-level-1 ((t (:inherit org-level-1 :height 1.75))))
- '(org-level-2 ((t (:inherit org-level-2 :height 1.5))))
- '(org-level-3 ((t (:inherit org-level-3 :height 1.25))))
- '(org-level-4 ((t (:inherit org-level-4 :height 1.1))))
- '(org-level-5 ((t (:inherit org-level-5 :height 1.0)))))
+
 
 
 (add-hook 'org-mode-hook
@@ -695,6 +850,30 @@ ad-do-it))))
 	    (define-key yas/keymap [tab] 'yas/next-field-or-maybe-expand)))
 
 (add-hook 'org-mode-hook 'turn-off-filladapt-mode) ;; filladapt doesn't work with org
+
+;;
+
+(setcar (nthcdr 2 org-emphasis-regexp-components) " \t\r\n")
+(org-set-emph-re 'org-emphasis-regexp-components org-emphasis-regexp-components)
+
+(require 'calfw)
+(require 'calfw-org)
+
+
+;; custom org agenda
+(setq org-agenda-custom-commands
+      '(("c" "Calendar" agenda "2 weeks span"
+         ((org-agenda-span 14)                          ;; [1]
+          (org-agenda-start-on-weekday 0)               ;; [2]
+          ;; (org-agenda-time-grid nil)
+          ;; (org-agenda-repeating-timestamp-show-all t)   ;; [3]
+          ;; (org-agenda-entry-types '(:timestamp :sexp))))  ;; [4]
+	  ;; other commands go here
+	  ))
+        ))
+
+
+
 
 ;; json-mode
 ;; (require 'json-mode)
@@ -713,17 +892,17 @@ ad-do-it))))
 (add-hook 'LaTeX-mode-hook 'ac-latex-mode-setup)
 (ac-flyspell-workaround)
 
-;reftex
+					;reftex ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
-;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; with AUCTeX LaTeX mode
+					;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; with AUCTeX LaTeX mode ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 (add-hook 'reftex-load-hook 'imenu-add-menubar-index)
 (add-hook 'reftex-mode-hook 'imenu-add-menubar-index)
-;For high-speed access, one can bind the imenu to a right mouse click:
+					;For high-speed access, one can bind the imenu to a right mouse click: ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 (global-set-key [down-mouse-3] 'imenu)
 
 
-					;flymake latex syntax checking
+					;flymake latex syntax checking ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 (require 'flymake)
 (defun flymake-get-tex-args (file-name)
   (list "pdflatex"
@@ -732,7 +911,7 @@ ad-do-it))))
 
 
 
-					;outline mode, allow section folding
+					;outline mode, allow section folding ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 (defun turn-on-outline-minor-mode ()
   (outline-minor-mode 1))
 (add-hook 'LaTeX-mode-hook 'turn-on-outline-minor-mode)
@@ -787,6 +966,7 @@ ad-do-it))))
                             tab-width 4))))
 
 
+
 ;; smart operator, adding spaces between operators for python
 ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/smart-operator")
 ;; (require 'smart-operator)
@@ -818,15 +998,16 @@ ad-do-it))))
 ;; (setq jedi:tooltip-method '(pos-tip))
 
 ;; company-jedi
-
+;;not sure...
 (require 'company-jedi)
 
-;; (add-hook 'python-mode-hook 'jedi:setup)
-;; (setq jedi:complete-on-dot t)
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t)
 ;; (setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi/jediepcserver.py"))
 
 
 ;; unload old and configure new jedi keybindings
+(setq jedi:environment-virtualenv (list (expand-file-name "~/.emacs.d/.python-environments/")))
 
 (defun jedi-config-keys ()
   (local-set-key (kbd "M-t") 'jedi:goto-definition)
@@ -843,9 +1024,18 @@ ad-do-it))))
   (add-to-list 'company-backends 'company-jedi)
   )
 
+
+(defun run-python-once ()
+  (remove-hook 'python-mode-hook 'run-python-once)
+  (run-python (python-shell-parse-command)))
+
+
 (add-hook 'python-mode-hook 'my/python-mode-hook)
-(add-hook 'python-mode-hook 'run-python-internal)
+(add-hook 'python-mode-hook 'run-python-once)
 (add-hook 'python-mode-hook 'jedi-config-keys)
+(add-hook 'python-mode-hook (lambda ()
+			      (require 'sphinx-doc)
+			      (sphinx-doc-mode t)))
 
 ;; Configure flymake with pylint for Python
 ;; (when (load "flymake" t)
@@ -886,7 +1076,9 @@ ad-do-it))))
 
 ;;auto pep8 M-x package-install py-autopep8 (sudo pip install pep8 autopep8)
 (require 'py-autopep8)
-(add-hook 'before-save-hook 'py-autopep8-before-save)
+(add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+
+
 
 ;;ein ipython notebook
 ;;M-x package-install websocket
@@ -942,10 +1134,10 @@ ad-do-it))))
 (autoload 'predictive-mode "predictive" "predictive" t)
 (set-default 'predictive-auto-add-to-dict t)
 (setq ;predictive-main-dict 'steve-dictionary
-      predictive-auto-learn t
-      predictive-add-to-dict-ask nil
-      predictive-use-auto-learn-cache nil
-      predictive-which-dict t)
+ predictive-auto-learn t
+ predictive-add-to-dict-ask nil
+ predictive-use-auto-learn-cache nil
+ predictive-which-dict t)
 
 
 
@@ -1006,6 +1198,9 @@ ad-do-it))))
 (add-to-list 'load-path "~/.emacs.d/site-lisp/clang-format")
 (require 'clang-format)
 (global-set-key [C-tab] 'clang-format-region)
+
+;; coloring the delimiters () {} [] differently by depth
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 ;; because same random jerk prefer this style...
 (defun ROS-c-mode-hook()
@@ -1077,6 +1272,12 @@ ad-do-it))))
 ;;(global-set-key [f2] 'flyspell-mode)
 (global-set-key (kbd "C-*") 'ispell-word)
 
+;; skip regions in org
+(add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
+(add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
+(add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXAMPLE"))
+
+
 ;; (load-file "<PATH>/flycheck-grammalecte/flycheck-grammalecte.el")
 (add-to-list 'load-path "~/.emacs.d/site-lisp/flycheck-grammalecte")
 (require 'flycheck-grammalecte)
@@ -1113,19 +1314,19 @@ ad-do-it))))
 ;;        ))
 
 
-					;(add-hook 'find-file-hooks 'auto-insert)
-					;(setq auto-insert-directory (expand-file-name "~/.autoinsert/"))
-					;(auto-insert-mode 1)
+					;(add-hook 'find-file-hooks 'auto-insert) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;(setq auto-insert-directory (expand-file-name "~/.autoinsert/")) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;(auto-insert-mode 1) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 
-					;(setq auto-insert-query t) ;; prompt before insertion
+					;(setq auto-insert-query t) ;; prompt before insertion ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 
-					; (setq auto-insert-alist
-					;       '(("\.c"  . "c-template.c")
-					; 	("\.cc"   . "c-template.c")
-					; 	("\.cpp"  . "c-template.c")
-					; 	("\.h"  . "c-template.c")
-					; 	("\.hh"  . "c-template.c")
-					; 	("\.hpp" . "c-template.c")))
+					; (setq auto-insert-alist ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;       '(("\.c"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					; 	("\.cc"   . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					; 	("\.cpp"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					; 	("\.h"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					; 	("\.hh"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					; 	("\.hpp" . "c-template.c"))) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 
 
 
@@ -1180,38 +1381,38 @@ ad-do-it))))
   )
 
 (defun insert-today ()
-"Insert today's date into buffer"
-(interactive)
-(insert (format-time-string "%A, %B %e %Y" (current-time))))
+  "Insert today's date into buffer"
+  (interactive)
+  (insert (format-time-string "%A, %B %e %Y" (current-time))))
 
 (defun auto-update-c-source-file ()
-(save-excursion
-  ;; Replace HHHH with file name sans suffix
-  (while (search-forward "HHHH" nil t)
-    (save-restriction
-      (narrow-to-region (match-beginning 0) (match-end 0))
-      (replace-match (concat (file-name-sans-extension (file-name-nondirectory buffer-file-name)) ".h") t
-		     )
-      ))
+  (save-excursion
+    ;; Replace HHHH with file name sans suffix
+    (while (search-forward "HHHH" nil t)
+      (save-restriction
+	(narrow-to-region (match-beginning 0) (match-end 0))
+	(replace-match (concat (file-name-sans-extension (file-name-nondirectory buffer-file-name)) ".h") t
+		       )
+	))
+    )
+  (save-excursion
+    ;; Replace @@@ with file name
+    (while (search-forward "@@@" nil t)
+      (save-restriction
+	(narrow-to-region (match-beginning 0) (match-end 0))
+	(replace-match (file-name-nondirectory buffer-file-name))
+	))
+    )
+  (save-excursion
+    ;; replace DDDD with today's date
+    (while (search-forward "DDDD" nil t)
+      (save-restriction
+	(narrow-to-region (match-beginning 0) (match-end 0))
+	(replace-match "")
+	(insert-today)
+	))
+    )
   )
-(save-excursion
-  ;; Replace @@@ with file name
-  (while (search-forward "@@@" nil t)
-    (save-restriction
-      (narrow-to-region (match-beginning 0) (match-end 0))
-      (replace-match (file-name-nondirectory buffer-file-name))
-      ))
-  )
-(save-excursion
-  ;; replace DDDD with today's date
-  (while (search-forward "DDDD" nil t)
-    (save-restriction
-      (narrow-to-region (match-beginning 0) (match-end 0))
-      (replace-match "")
-      (insert-today)
-      ))
-  )
-)
 
 
 ;; if you create a file called Test.hpp, this function will replace:
@@ -1298,8 +1499,11 @@ ad-do-it))))
 
 ;; better
 (require 'highlight-indent-guides)
-(setq highlight-indent-guides-method 'character)
+(setq highlight-indent-guides-method 'character) ;;fine lines
+(setq highlight-indent-guides-auto-character-face-perc 20)
 (add-hook 'c-mode-common-hook 'highlight-indent-guides-mode)
+(add-hook 'python-mode-hook 'highlight-indent-guides-mode)
+
 
 ;; AGRESSIVE INDENT
 (global-aggressive-indent-mode 1)
@@ -1332,9 +1536,9 @@ ad-do-it))))
 
 
 ;; c++ auto include headers
-(add-to-list 'load-path "~/.emacs.d/site-lisp/cpp-auto-include")
-(require 'cpp-auto-include)
-(add-hook 'c-mode-common-hook 'cpp-auto-include)
+;; (add-to-list 'load-path "~/.emacs.d/site-lisp/cpp-auto-include")
+;; (require 'cpp-auto-include)
+;; (add-hook 'c-mode-common-hook 'cpp-auto-include)
 
 ;; c/c++ header auto complete
 (defun my:ac-c-header-init()
@@ -1349,7 +1553,8 @@ ad-do-it))))
 (add-hook 'c-mode-hook 'my:ac-c-header-init)
 
 ;; iedit, simultaneous editing different regions
-(define-key global-map (kbd "C-c ;") 'iedit-mode)
+(require 'iedit)
+(define-key global-map (kbd "C-;") 'iedit-mode)
 
 
 ;; company-mode auto completion
@@ -1357,15 +1562,15 @@ ad-do-it))))
 
 
 ;; =============
-;; irony-mode
+;; irony-mode (C++ completion)
 ;; =============
 (add-hook 'c++-mode-hook 'irony-mode)
 (add-hook 'c-mode-hook 'irony-mode)
 ;; =============
 ;; company mode
 ;; =============
-(add-hook 'c++-mode-hook 'company-mode)
-(add-hook 'c-mode-hook 'company-mode)
+;; (add-hook 'c++-mode-hook 'company-mode)
+;; (add-hook 'c-mode-hook 'company-mode)
 ;; replace the `completion-at-point' and `complete-symbol' bindings in
 ;; irony-mode's buffers by irony-mode's function
 (defun my-irony-mode-hook ()
@@ -1379,8 +1584,8 @@ ad-do-it))))
 (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 
-;; (eval-after-load 'company
-;;   '(add-to-list 'company-backends 'company-irony))
+(eval-after-load 'company
+  '(add-to-list 'company-backends 'company-irony))
 (require 'company-irony-c-headers)
 (eval-after-load 'company
   '(add-to-list
@@ -1397,6 +1602,8 @@ ad-do-it))))
 (add-hook 'c-mode-hook 'flycheck-mode)
 (eval-after-load 'flycheck
   '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+(add-hook 'c++-mode-hook
+          (lambda () (setq flycheck-clang-language-standard "c++11")))
 
 
 ;; Doesn't work?
@@ -1413,11 +1620,12 @@ ad-do-it))))
 
 ;; rtags
 (require 'rtags)
-(add-hook 'c-mode-common-hook 'rtags-start-process-unless-running)
-(add-hook 'c++-mode-common-hook 'rtags-start-process-unless-running)
+;; (add-hook 'c-mode-common-hook 'rtags-start-process-unless-running)
+;; (add-hook 'c++-mode-common-hook 'rtags-start-process-unless-running)
 ;; cmake-ide (seems good)
 (cmake-ide-setup)
 (setq cmake-ide-flags-c++ (append '("-std=c++11")))
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (require 'company-rtags)
@@ -1497,10 +1705,10 @@ ad-do-it))))
 (defun irony--check-expansion ()
   (save-excursion
     (if (looking-at "\\_>") t
+      (backward-char 1)
+      (if (looking-at "\\.") t
 	(backward-char 1)
-	(if (looking-at "\\.") t
-	    (backward-char 1)
-	    (if (looking-at "->") t nil)))))
+	(if (looking-at "->") t nil)))))
 (defun irony--indent-or-complete ()
   "Indent or Complete"
   (interactive)
@@ -1522,9 +1730,9 @@ ad-do-it))))
 ;; irony-mode's buffers by irony-mode's function
 (defun my-irony-mode-hook ()
   (define-key irony-mode-map [remap completion-at-point]
-	      'irony-completion-at-point-async)
+    'irony-completion-at-point-async)
   (define-key irony-mode-map [remap complete-symbol]
-	      'irony-completion-at-point-async))
+    'irony-completion-at-point-async))
 (add-hook 'irony-mode-hook 'my-irony-mode-hook)
 (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
@@ -1638,11 +1846,22 @@ ad-do-it))))
 					; # Zone séléctionnée en surbrillance
 (transient-mark-mode t)
 
-(setq x-select-enable-clipboard t) ; handle standard clipboard
-(setq x-select-enable-primary t) ; handle x primary (mouse select)
+;;why?? seems to break the delete-selection behavior
+;; (setq x-select-enable-clipboard t) ; handle standard clipboard
+;; (setq x-select-enable-primary t) ; handle x primary (mouse select)
 
 ;; (set-foreground-color "grey80")
 ;; (set-background-color "black")
+
+
+;; highlight some operation (yank)
+(require 'volatile-highlights)
+(volatile-highlights-mode t)
+;;-----------------------------------------------------------------------------
+;; Supporting undo-tree.
+;;-----------------------------------------------------------------------------
+(vhl/define-extension 'undo-tree 'undo-tree-yank 'undo-tree-move)
+(vhl/install-extension 'undo-tree)
 
 
 (require 'all-the-icons)
@@ -1651,7 +1870,7 @@ ad-do-it))))
 (require 'doom-themes)
 
 ;; Global settings (defaults)
-(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+(setq doom-themes-enable-bold nil    ; if nil, bold is universally disabled
       doom-themes-enable-italic t) ; if nil, italics is universally disabled
 
 ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
@@ -1674,7 +1893,7 @@ ad-do-it))))
 
 ;; highlight current line (fucked in terminal???)
 (if window-system (global-hl-line-mode 1))
-(if window-system (set-face-background 'hl-line "#444"))
+(if window-system (set-face-background 'hl-line "#333"))
 
 
 
@@ -1693,6 +1912,15 @@ ad-do-it))))
 (require 'paren)
 (show-paren-mode 1)
 (setq-default hilight-paren-expression t)
+;; (set-face-background 'show-paren-match (face-background 'default))
+(set-face-background 'show-paren-match "magenta")
+(set-face-foreground 'show-paren-match "#def")
+(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+
+;; (setq blink-matching-paren t)
+;; (defadvice show-paren-function (after blink activate)
+;;   (when (= ?\) (char-before (point)))
+;;     (blink-matching-open)))
 
 ;; fancy powerline
 (require 'powerline)
@@ -1702,6 +1930,11 @@ ad-do-it))))
 ;;       'slant)
 (setq powerline-arrow-shape 'curve)
 (setq powerline-default-separator-dir '(right . left))
+
+
+
+
+
 
 ;; smart-mode-line
 ;; (setq sml/no-confirm-load-theme t)
@@ -1779,7 +2012,8 @@ ad-do-it))))
 (put 'upcase-region 'disabled nil)
 
 (defun word-count nil "Count words in buffer" (interactive)
-(shell-command-on-region (point-min) (point-max) "wc -w"))
+       (shell-command-on-region (point-min) (point-max) "wc -w"))
+
 
 
 
@@ -1973,6 +2207,9 @@ ad-do-it))))
 
 
 
+
+;;end of wrap of .emacs file
+)
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -1981,4 +2218,27 @@ ad-do-it))))
  '(custom-safe-themes
    (quote
     ("3c83b3676d796422704082049fc38b6966bcad960f896669dfc21a7a37a748fa" default)))
- '(inhibit-startup-screen t))
+ '(inhibit-startup-screen t)
+ '(org-agenda-files
+   (quote
+    ("~/Project/Repo/org/kid_public/org_hl_kid/formation/sycu_2.org" "/home/steve/Project/Repo/org/NOTES.org" "/home/steve/Project/Repo/org/TODOs.org" "/home/steve/Project/Repo/org/anr_brouillon.org" "/home/steve/Project/Repo/org/anr_stoch.org" "/home/steve/Project/Repo/org/anr_weaugment.org" "/home/steve/Project/Repo/org/boite.org" "/home/steve/Project/Repo/org/coins.org" "/home/steve/Project/Repo/org/drone.org" "/home/steve/Project/Repo/org/ideas.org" "/home/steve/Project/Repo/org/realtime.org" "/home/steve/Project/Repo/org/robocup.org" "/home/steve/Project/Repo/org/robocup2016.org" "/home/steve/Project/Repo/org/robocup2017.org" "/home/steve/Project/Repo/org/robocup2018.org" "/home/steve/Project/Repo/org/ultraban.org" "/home/steve/Project/Repo/org/waseda.org")))
+ '(package-selected-packages
+   (quote
+    (bm flx flx-ido ox-clip fireplace fill-column-indicator eyebrowse magit magithub which-key volatile-highlights visual-regexp-steroids string-inflection sphinx-doc smart-mode-line-powerline-theme rainbow-delimiters py-autopep8 org-bullets org-agenda-property org-ac org neotree irony-eldoc iedit highlight-indent-guides helm-swoop helm-rtags helm-gtags font-lock+ flycheck-pyflakes flycheck-irony flycheck-clangcheck flycheck-clang-tidy flycheck-clang-analyzer doom-themes company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex cmake-mode cmake-ide clang-format cheatsheet calfw-org calfw browse-kill-ring+ auto-complete-c-headers aggressive-indent aggressive-fill-paragraph 2048-game))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(org-level-1 ((t (:inherit org-level-1 :height 1.75))))
+ '(org-level-2 ((t (:inherit org-level-2 :height 1.5))))
+ '(org-level-3 ((t (:inherit org-level-3 :height 1.25))))
+ '(org-level-4 ((t (:inherit org-level-4 :height 1.1))))
+ '(org-level-5 ((t (:inherit org-level-5 :height 1.0))))
+ '(tabbar-button ((t (:inherit tabbar-default :foreground "gray80"))))
+ '(tabbar-button-highlight ((t (:inherit tabbar-default))))
+ '(tabbar-default ((t (:inherit variable-pitch :background "gray60" :foreground "black" :weight bold))))
+ '(tabbar-highlight ((t (:underline t))))
+ '(tabbar-selected ((t (:background "white" :foreground "black" :weight bold))))
+ '(tabbar-separator ((t (:inherit tabbar-default :background "gray90"))))
+ '(tabbar-unselected ((t (:inherit tabbar-default)))))

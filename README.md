@@ -20,6 +20,7 @@ required package:
 required packages (M-x package-install):
 
 - jedi (then M-x jedi:install-server, then create simlink .emacs.d/elpa/jedi ->.emacs.d/elpa/jedi-xxxxx)
+- sphinx-doc
 - auto-complete
 - auto-complete-c-headers
 - iedit
@@ -53,6 +54,8 @@ required packages (M-x package-install):
   	      	    		 https://github.com/Andersbakken/rtags
 				 https://vxlabs.com/2016/04/11/step-by-step-guide-to-c-navigation-and-completion-with-emacs-and-the-clang-based-rtags/
 
+TODO: helm (helm-swoop)
+      use-package
 
 #zsh
 

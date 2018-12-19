@@ -110,21 +110,24 @@ alias z='fasd_cd -d' # cd, same functionality as j in autojump
 alias zz='fasd_cd -d -i' # cd with interactive selection
 
 XMODIFIERS=emacs
-alias emacs='emacs -mm' #emacs maximised
+alias emacs='emacs25 -mm' #emacs maximised
 
 #disable the shared history between terminals
 unsetopt share_history
+
+#symbolic links (go to the real path by default)
+set -w
 
 #stupid makerware
 alias makerware="env LC_ALL=\"en_US.UTF-8\" makerware"
 
 #VREP_STUFF
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/steve/divers/VREP/V-REP_PRO_EDU_V3_1_3_rev2b_64_Linux"
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/steve/divers/VREP/V-REP_PRO_EDU_V3_1_3_rev2b_64_Linux"
-# source /opt/ros/indigo/setup.zsh
-source /home/steve/Project/DEV/catkin_ws/devel/setup.zsh
-
-source /opt/ros/kinetic/setup.zsh
+# source /opt/ros/kinetic/setup.zsh
+# source /home/steve/Project/DEV/catkin_ws/devel/setup.zsh
+# source /home/steve/Project/DEV/catkin_ws/install_isolated/setup.zsh
+# export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:/home/steve/Project/DEV/catkin_ws:/home/steve/Project/DEV/catkin_ws/src/hector_quadrotor #has been
 
 
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
@@ -132,10 +135,19 @@ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr
 #export ROS_IP=`hostname -I`
 # export ROS_MASTER_URI=http://rosban.local:11311/
 #export ROS_MASTER_URI=http://steve-hp:11311/
+export ROS_MASTER_URI=http://steve-hp.local:11311/
+export ROS_HOSTNAME=steve-hp.local
+# export GAZEBO_MASTER_URI=http://steve-hp.local:11345
+export GAZEBO_MASTER_URI=http://tower.local:11345
+
 
 #BVS STUFFS
 export BVSDIR=/home/steve/Project/DEV/BVS
 #export BVS_LIBS=/home/steve/Project/DEV/BVS/lib
+
+
+#Rhoban stuff
+#source /home/steve/Project/Repo/deps/zshrc
 
 #CCACHE
 # export CCACHE_PREFIX=/usr/bin/distg++
@@ -145,3 +157,15 @@ export BVSDIR=/home/steve/Project/DEV/BVS
 
 # dbus worning with emacs?
 export NO_AT_BRIDGE=1
+export GAZEBO_MODEL_PATH=/home/steve/Project/Repo/ardupilot_gazebo
+
+
+#Px4 stuffs
+#export PATH=/opt/gcc-arm-none-eabi-4_9-2015q3/bin:$PATH
+export PATH=/home/steve/Project/Repo/ardupilot/Tools/autotest:$PATH
+export PATH=/home/steve/gcc-arm-none-eabi-7-2017-q4-major/bin:$PATH
+
+
+export PATH="$PATH:/home/steve/Project/Repo/SYCU/workspace/devel_release/lib/RhIOShell/"
+
+export SYCU="/home/steve/Project/Repo/SYCU/"
