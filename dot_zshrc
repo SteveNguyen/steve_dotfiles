@@ -109,6 +109,8 @@ alias sf='fasd -sif' # interactive file selection
 alias z='fasd_cd -d' # cd, same functionality as j in autojump
 alias zz='fasd_cd -d -i' # cd with interactive selection
 
+alias ff='feh -FZ --force-aliasing'
+
 XMODIFIERS=emacs
 alias emacs='emacs25 -mm' #emacs maximised
 
@@ -124,9 +126,10 @@ alias makerware="env LC_ALL=\"en_US.UTF-8\" makerware"
 #VREP_STUFF
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/steve/divers/VREP/V-REP_PRO_EDU_V3_1_3_rev2b_64_Linux"
 
-# source /opt/ros/kinetic/setup.zsh
-# source /home/steve/Project/DEV/catkin_ws/devel/setup.zsh
-# source /home/steve/Project/DEV/catkin_ws/install_isolated/setup.zsh
+source /opt/ros/kinetic/setup.zsh
+source /home/steve/Project/DEV/catkin_ws/devel/setup.zsh
+source /home/steve/Project/DEV/catkin_ws/devel_isolated/setup.zsh
+source /home/steve/Project/DEV/catkin_ws/install_isolated/setup.zsh
 # export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:/home/steve/Project/DEV/catkin_ws:/home/steve/Project/DEV/catkin_ws/src/hector_quadrotor #has been
 
 
@@ -138,7 +141,7 @@ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr
 export ROS_MASTER_URI=http://steve-hp.local:11311/
 export ROS_HOSTNAME=steve-hp.local
 # export GAZEBO_MASTER_URI=http://steve-hp.local:11345
-export GAZEBO_MASTER_URI=http://tower.local:11345
+# export GAZEBO_MASTER_URI=http://tower.local:11345
 
 
 #BVS STUFFS
@@ -166,6 +169,6 @@ export PATH=/home/steve/Project/Repo/ardupilot/Tools/autotest:$PATH
 export PATH=/home/steve/gcc-arm-none-eabi-7-2017-q4-major/bin:$PATH
 
 
-export PATH="$PATH:/home/steve/Project/Repo/SYCU/workspace/devel_release/lib/RhIOShell/"
+# export PATH="$PATH:/home/steve/Project/Repo/SYCU/workspace/devel_release/lib/RhIOShell/"
 
-export SYCU="/home/steve/Project/Repo/SYCU/"
+# export SYCU="/home/steve/Project/Repo/SYCU/"
