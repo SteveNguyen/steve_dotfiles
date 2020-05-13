@@ -74,6 +74,7 @@ required packages (M-x package-install):
 
 TODO: helm (helm-swoop)
       use-package
+      lsp-mode?
 
 #zsh
 
