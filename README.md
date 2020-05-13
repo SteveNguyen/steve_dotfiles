@@ -21,33 +21,51 @@ required packages (M-x package-install):
 
 - jedi (then M-x jedi:install-server, then create simlink .emacs.d/elpa/jedi ->.emacs.d/elpa/jedi-xxxxx)
 - sphinx-doc
-- auto-complete
-- auto-complete-c-headers
+- iregister
+- cheatsheet
+- string-inflection
+- *auto-complete
+- *auto-complete-c-headers
 - iedit
+- ace-jump-mode
+- multiple-cursors
+- sublimity
+- expand-region
+- calfw
+- calfw-org
 - epc
 - browse-kill-ring+
 - py-autopep8 (python-autopep8)
 - aggressive-indent
 - clang-format
-- helm-gtags (requires gnu global)
+- *helm-gtags (requires gnu global)
+- helm-rtags
 - powerline (https://github.com/powerline/fonts)
 - neotree
 - which-key
+- volatile-highlight
+- all-the-icons
+- doom-themes
+- molokai-themes
+- rainbow-delimiter
 - smart-mode-line
 - smart-mode-line-theme
 - highlight-indent-guides
-- yasnippet
+- *yasnippet
 - org-bullets
 - flycheck-pyflakes (pip install pyflakes)
+- flycheck-grammalecte
 - company-irony (launch M-x irony-install-server)
 - company-irony-c-headers
 - company-auctex
 - company-bibtex
-- company-c-header
+- *company-c-header
 - irony-eldoc
 - rtags
 - flycheck-irony
 - string-inflection
+- visual-regexp
+- tabbar-ruller
 - cmake-ide (rtags, flycheck, autocomplete-clang, company-clang, irony, needs clang, libclang, libclang-dev) see: https://github.com/atilaneves/cmake-ide
   (use clang-3.6 libllvm3.8?)
   infos about rtags integration: https://syamajala.github.io/c-ide.html

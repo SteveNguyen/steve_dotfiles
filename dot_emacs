@@ -88,6 +88,10 @@
   (menu-bar-mode 0)
   (scroll-bar-mode 0)
 
+  (tooltip-mode nil)
+  (setq tooltip-use-echo-area t)
+
+
   (defun toggle-bars-view()
     (interactive)
     (if tool-bar-mode (tool-bar-mode 0) (tool-bar-mode 1))
@@ -110,7 +114,7 @@
   (global-linum-mode t)
 
   ;; delete the selection when DEL of C-y
-  (delete-selection-mode t)
+  (delete-selection-mode 1)
 
 
   ;; just remove the trailing whitespaces when saving
@@ -118,15 +122,15 @@
 
   ;; marmalade package repo
   (require 'package)
-  (add-to-list 'package-archives
-	       '("marmalade" .
-		 "http://marmalade-repo.org/packages/"))
+  ;; (add-to-list 'package-archives
+  ;; 	       '("marmalade" .
+  ;; 		 "http://marmalade-repo.org/packages/"))
 
   (add-to-list 'package-archives
 	       '("melpa" . "https://melpa.org/packages/") t)
-  (when (< emacs-major-version 24)
-    ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
+  ;; (when (< emacs-major-version 24)
+  ;;   ;; For important compatibility libraries like cl-lib
+  ;;   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
 
   ;; too long!
   (package-initialize)
@@ -164,6 +168,14 @@
 		  :key "C-S-s"
 		  :description "seach symbol at point")
 
+  (cheatsheet-add :group 'Navigation
+		  :key "C-j"
+		  :description "iregister: jump to position from register")
+
+  (cheatsheet-add :group 'Navigation
+		  :key "C-S-j"
+		  :description "iregister: jump to prev position from register")
+
 
   (cheatsheet-add :group 'Edition
 		  :key "C-S-c C-S-c"
@@ -195,7 +207,7 @@
 		  :description "vr/mc-mark: visual mark multiple cursor regexp")
 
   (cheatsheet-add :group 'Edition
-		  :key "C-c k"
+		  :key "C-c C-k"
 		  :description "copy line")
 
   (cheatsheet-add :group 'Edition
@@ -207,6 +219,15 @@
 		  :description "iedit mode: simutaneous edit matching string at point")
 
 
+  (cheatsheet-add :group 'Edition
+		  :key "C-M-w"
+		  :description "iregister: copy to register and kill ring (position or selected region")
+
+  (cheatsheet-add :group 'Edition
+		  :key "C-M-y"
+		  :description "iregister: paste from register")
+
+
   (cheatsheet-add :group 'Org
 		  :key "C-c C-x C-l"
 		  :description "preview latex fragment")
@@ -215,6 +236,11 @@
   (cheatsheet-add :group 'Org
 		  :key "C-c a"
 		  :description "agenda")
+
+
+  (cheatsheet-add :group 'Prog-python
+		  :key "C-c ?"
+		  :description "doc at point")
 
 
 
@@ -231,7 +257,14 @@
   (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
   (setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
 
-
+  ;; Simplify use of registers
+  (require 'iregister)
+  (global-set-key (kbd "C-j") 'iregister-jump-to-next-marker)
+  (global-set-key (kbd "C-S-j") 'iregister-jump-to-previous-marker)
+  ;; (global-set-key (kbd "C-x r") 'iregister-point-or-text-to-register)
+  (global-set-key (kbd "C-M-y") 'iregister-latest-text)
+  (global-set-key (kbd "C-M-w") 'iregister-point-or-text-to-register-kill-ring-save) ;; Replace  copy function
+  ;; (global-set-key (kbd "C-w") 'iregister-copy-to-register-kill) ;; Replace normal 'cut' function
 
   ;; Comment/uncomment block
   (defun comment-or-uncomment-region-or-line ()
@@ -339,7 +372,7 @@
   (global-set-key (kbd "C-c C-k") 'copy-line)
 
   ;; Browse the kill ring+ M-x package install browse-kill-ring+
-  (require 'browse-kill-ring+)
+  (require 'browse-kill-ring)
   (global-set-key (kbd "C-x C-y") 'browse-kill-ring)
 
   ;; undo tree
@@ -422,11 +455,11 @@
    '(org-level-5 ((t (:inherit org-level-5 :height 1.0))))
    '(tabbar-button ((t (:inherit tabbar-default :foreground "gray80"))))
    '(tabbar-button-highlight ((t (:inherit tabbar-default))))
-   '(tabbar-default ((t (:inherit variable-pitch :background "gray60" :foreground "black" :weight bold))))
+   '(tabbar-default ((t (:inherit variable-pitch :background "gray60" :foreground "white" :weight bold))))
    '(tabbar-highlight ((t (:underline t))))
    '(tabbar-selected ((t (:background "white" :foreground "black" :weight bold))))
    '(tabbar-separator ((t (:inherit tabbar-default :background "gray90"))))
-   '(tabbar-unselected ((t (:inherit tabbar-default)))))
+   '(tabbar-unselected ((t (:inherit tabbar-default :foreground "white")))))
 
 
   ;; tabbar/ruler
@@ -442,6 +475,9 @@
   ;; neotree (files in the left)
   (require 'neotree)
   (global-set-key [f8] 'neotree-toggle)
+
+  ;; better handling of large files
+  (require 'vlf-setup)
 
 
   ;; move through windows
@@ -977,8 +1013,21 @@ advice lik this:
 (add-hook 'python-mode-hook 'flycheck-mode)
 
 ;; disable the slow ones
-(add-to-list 'flycheck-disabled-checkers 'python-flake8)
+;; (add-to-list 'flycheck-disabled-checkers 'python-flake8)
 (add-to-list 'flycheck-disabled-checkers 'python-pylint)
+
+;; (flycheck-define-checker
+;;     python-mypy ""
+;;     :command ("mypy"
+;; 	      "--ignore-missing-imports" "--fast-parser"
+;; 	      "--python-version" "3.6"
+;; 	      source-original)
+;;     :error-patterns
+;;     ((error line-start (file-name) ":" line ": error:" (message) line-end))
+;;     :modes python-mode)
+;; (add-to-list 'flycheck-checkers 'python-mypy t)
+;; (flycheck-add-next-checker 'python-pylint 'python-mypy t)
+;; (setq flycheck-python-pycompile-executable "/usr/bin/python3")
 
 
 ;; Jedi python completion
@@ -996,14 +1045,14 @@ advice lik this:
 
 ;; (setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi/jediepcserver.py"))
 ;; (setq jedi:tooltip-method '(pos-tip))
-
+(setq jedi:tooltip-method '(nil))
 ;; company-jedi
 ;;not sure...
 (require 'company-jedi)
 
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
-;; (setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi/jediepcserver.py"))
+(setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi/jediepcserver.py"))
 
 
 ;; unload old and configure new jedi keybindings
@@ -1031,11 +1080,11 @@ advice lik this:
 
 
 (add-hook 'python-mode-hook 'my/python-mode-hook)
-(add-hook 'python-mode-hook 'run-python-once)
+;; (add-hook 'python-mode-hook 'run-python-once)
 (add-hook 'python-mode-hook 'jedi-config-keys)
-(add-hook 'python-mode-hook (lambda ()
-			      (require 'sphinx-doc)
-			      (sphinx-doc-mode t)))
+;; (add-hook 'python-mode-hook (lambda ()
+;; 			      (require 'sphinx-doc)
+;; 			      (sphinx-doc-mode t)))
 
 ;; Configure flymake with pylint for Python
 ;; (when (load "flymake" t)
@@ -1254,6 +1303,8 @@ advice lik this:
 	("\\.org$" . org-mode)
 	("\\.bib$" . bibtex-mode)
 	("\\.json$" . json-mode)
+	("\\.xml$" . xml-mode)
+	("\\.launch$" . xml-mode)
 	)
       )
 
@@ -1605,6 +1656,7 @@ advice lik this:
 (add-hook 'c++-mode-hook
           (lambda () (setq flycheck-clang-language-standard "c++11")))
 
+;; (setq flycheck-display-errors-function 'flycheck-pos-tip-mode)
 
 ;; Doesn't work?
 ;; ;; flycheck rtags
@@ -1741,6 +1793,7 @@ advice lik this:
 
 
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -1848,7 +1901,7 @@ advice lik this:
 
 ;;why?? seems to break the delete-selection behavior
 ;; (setq x-select-enable-clipboard t) ; handle standard clipboard
-;; (setq x-select-enable-primary t) ; handle x primary (mouse select)
+(setq x-select-enable-primary t) ; handle x primary (mouse select)
 
 ;; (set-foreground-color "grey80")
 ;; (set-background-color "black")
@@ -1889,6 +1942,9 @@ advice lik this:
 ;; Corrects (and improves) org-mode's native fontification.
 (doom-themes-org-config)
 ;; (doom-org-default-settings)
+
+(global-set-key [f5] (lambda () (interactive) (load-theme 'doom-opera-light t)))
+(global-set-key [f6] (lambda () (interactive) (load-theme 'doom-molokai t)))
 
 
 ;; highlight current line (fucked in terminal???)
@@ -2205,6 +2261,8 @@ advice lik this:
 					;                                       interpreter-mode-alist))
 					;    (autoload 'python-mode "python-mode" "Python editing mode." t)
 
+;; pop the debug if the provided regexp appears
+;; (setq debug-on-message "ufunc")
 
 
 
@@ -2224,7 +2282,7 @@ advice lik this:
     ("~/Project/Repo/org/kid_public/org_hl_kid/formation/sycu_2.org" "/home/steve/Project/Repo/org/NOTES.org" "/home/steve/Project/Repo/org/TODOs.org" "/home/steve/Project/Repo/org/anr_brouillon.org" "/home/steve/Project/Repo/org/anr_stoch.org" "/home/steve/Project/Repo/org/anr_weaugment.org" "/home/steve/Project/Repo/org/boite.org" "/home/steve/Project/Repo/org/coins.org" "/home/steve/Project/Repo/org/drone.org" "/home/steve/Project/Repo/org/ideas.org" "/home/steve/Project/Repo/org/realtime.org" "/home/steve/Project/Repo/org/robocup.org" "/home/steve/Project/Repo/org/robocup2016.org" "/home/steve/Project/Repo/org/robocup2017.org" "/home/steve/Project/Repo/org/robocup2018.org" "/home/steve/Project/Repo/org/ultraban.org" "/home/steve/Project/Repo/org/waseda.org")))
  '(package-selected-packages
    (quote
-    (bm flx flx-ido ox-clip fireplace fill-column-indicator eyebrowse magit magithub which-key volatile-highlights visual-regexp-steroids string-inflection sphinx-doc smart-mode-line-powerline-theme rainbow-delimiters py-autopep8 org-bullets org-agenda-property org-ac org neotree irony-eldoc iedit highlight-indent-guides helm-swoop helm-rtags helm-gtags font-lock+ flycheck-pyflakes flycheck-irony flycheck-clangcheck flycheck-clang-tidy flycheck-clang-analyzer doom-themes company-jedi company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex cmake-mode cmake-ide clang-format cheatsheet calfw-org calfw browse-kill-ring+ auto-complete-c-headers aggressive-indent aggressive-fill-paragraph 2048-game))))
+    (iregister vlf company-jedi jedi-core company-rtags flycheck-rtags ivy-rtags bm flx flx-ido ox-clip fireplace fill-column-indicator eyebrowse magit magithub which-key volatile-highlights visual-regexp-steroids string-inflection sphinx-doc smart-mode-line-powerline-theme rainbow-delimiters py-autopep8 org-bullets org-agenda-property org-ac org neotree irony-eldoc iedit highlight-indent-guides helm-swoop helm-rtags helm-gtags font-lock+ flycheck-pyflakes flycheck-irony flycheck-clangcheck flycheck-clang-tidy flycheck-clang-analyzer doom-themes company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex cmake-mode cmake-ide clang-format cheatsheet calfw-org calfw browse-kill-ring+ auto-complete-c-headers aggressive-indent aggressive-fill-paragraph 2048-game))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -2237,8 +2295,8 @@ advice lik this:
  '(org-level-5 ((t (:inherit org-level-5 :height 1.0))))
  '(tabbar-button ((t (:inherit tabbar-default :foreground "gray80"))))
  '(tabbar-button-highlight ((t (:inherit tabbar-default))))
- '(tabbar-default ((t (:inherit variable-pitch :background "gray60" :foreground "black" :weight bold))))
+ '(tabbar-default ((t (:inherit variable-pitch :background "gray60" :foreground "white" :weight bold))))
  '(tabbar-highlight ((t (:underline t))))
  '(tabbar-selected ((t (:background "white" :foreground "black" :weight bold))))
  '(tabbar-separator ((t (:inherit tabbar-default :background "gray90"))))
- '(tabbar-unselected ((t (:inherit tabbar-default)))))
+ '(tabbar-unselected ((t (:inherit tabbar-default :foreground "white")))))
