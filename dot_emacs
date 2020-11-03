@@ -1016,6 +1016,13 @@ advice lik this:
 ;; (add-to-list 'flycheck-disabled-checkers 'python-flake8)
 (add-to-list 'flycheck-disabled-checkers 'python-pylint)
 
+;; (eval-after-load 'flycheck
+;;   '(progn
+;;      (set-face-attribute 'flycheck-error nil :background "pink")
+;;      (set-face-attribute 'flycheck-warning nil :background "pink")
+;;      )
+;;   )
+
 ;; (flycheck-define-checker
 ;;     python-mypy ""
 ;;     :command ("mypy"
@@ -1900,8 +1907,10 @@ advice lik this:
 (transient-mark-mode t)
 
 ;;why?? seems to break the delete-selection behavior
-;; (setq x-select-enable-clipboard t) ; handle standard clipboard
+
 (setq x-select-enable-primary t) ; handle x primary (mouse select)
+(setq x-select-enable-clipboard t); (standard clipboard)
+(setq mouse-yank-at-point t)
 
 ;; (set-foreground-color "grey80")
 ;; (set-background-color "black")
@@ -1943,13 +1952,24 @@ advice lik this:
 (doom-themes-org-config)
 ;; (doom-org-default-settings)
 
-(global-set-key [f5] (lambda () (interactive) (load-theme 'doom-opera-light t)))
-(global-set-key [f6] (lambda () (interactive) (load-theme 'doom-molokai t)))
+;; (global-set-key [f5] (lambda () (interactive) (load-theme 'doom-opera-light t)))
+(global-set-key [f5] (lambda () (interactive) (load-theme 'sanityinc-tomorrow-day t)
+		       (set-face-background 'hl-line "#BBB")
+		       (set-face-background 'linum "white")
+		       (set-face-foreground 'linum "black")
+
+		       ))
+(global-set-key [f6] (lambda () (interactive) (load-theme 'doom-molokai t)
+		       (set-face-background 'hl-line "#333")
+		       (set-face-background 'linum "black")
+		       (set-face-foreground 'linum "gray80")
+		       ))
 
 
 ;; highlight current line (fucked in terminal???)
 (if window-system (global-hl-line-mode 1))
 (if window-system (set-face-background 'hl-line "#333"))
+;; (if window-system (set-face-background 'hl-line "#999"))
 
 
 
@@ -2282,7 +2302,7 @@ advice lik this:
     ("~/Project/Repo/org/kid_public/org_hl_kid/formation/sycu_2.org" "/home/steve/Project/Repo/org/NOTES.org" "/home/steve/Project/Repo/org/TODOs.org" "/home/steve/Project/Repo/org/anr_brouillon.org" "/home/steve/Project/Repo/org/anr_stoch.org" "/home/steve/Project/Repo/org/anr_weaugment.org" "/home/steve/Project/Repo/org/boite.org" "/home/steve/Project/Repo/org/coins.org" "/home/steve/Project/Repo/org/drone.org" "/home/steve/Project/Repo/org/ideas.org" "/home/steve/Project/Repo/org/realtime.org" "/home/steve/Project/Repo/org/robocup.org" "/home/steve/Project/Repo/org/robocup2016.org" "/home/steve/Project/Repo/org/robocup2017.org" "/home/steve/Project/Repo/org/robocup2018.org" "/home/steve/Project/Repo/org/ultraban.org" "/home/steve/Project/Repo/org/waseda.org")))
  '(package-selected-packages
    (quote
-    (iregister vlf company-jedi jedi-core company-rtags flycheck-rtags ivy-rtags bm flx flx-ido ox-clip fireplace fill-column-indicator eyebrowse magit magithub which-key volatile-highlights visual-regexp-steroids string-inflection sphinx-doc smart-mode-line-powerline-theme rainbow-delimiters py-autopep8 org-bullets org-agenda-property org-ac org neotree irony-eldoc iedit highlight-indent-guides helm-swoop helm-rtags helm-gtags font-lock+ flycheck-pyflakes flycheck-irony flycheck-clangcheck flycheck-clang-tidy flycheck-clang-analyzer doom-themes company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex cmake-mode cmake-ide clang-format cheatsheet calfw-org calfw browse-kill-ring+ auto-complete-c-headers aggressive-indent aggressive-fill-paragraph 2048-game))))
+    (json-mode yaml-mode color-theme-sanityinc-tomorrow iregister vlf company-jedi jedi-core company-rtags flycheck-rtags ivy-rtags bm flx flx-ido ox-clip fireplace fill-column-indicator eyebrowse magit magithub which-key volatile-highlights visual-regexp-steroids string-inflection sphinx-doc smart-mode-line-powerline-theme rainbow-delimiters py-autopep8 org-bullets org-agenda-property org-ac org neotree irony-eldoc iedit highlight-indent-guides helm-swoop helm-rtags helm-gtags font-lock+ flycheck-pyflakes flycheck-irony flycheck-clangcheck flycheck-clang-tidy flycheck-clang-analyzer doom-themes company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex cmake-mode cmake-ide clang-format cheatsheet calfw-org calfw browse-kill-ring+ auto-complete-c-headers aggressive-indent aggressive-fill-paragraph 2048-game))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

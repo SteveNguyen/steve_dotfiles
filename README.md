@@ -47,6 +47,7 @@ required packages (M-x package-install):
 - all-the-icons
 - doom-themes
 - molokai-themes
+- color-theme-sanity
 - rainbow-delimiter
 - smart-mode-line
 - smart-mode-line-theme
