@@ -122,30 +122,16 @@
   ;; just remove the trailing whitespaces when saving
   (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-  ;; marmalade package repo
-  (require 'package)
-  ;; (add-to-list 'package-archives
-  ;; 	       '("marmalade" .
-  ;; 		 "http://marmalade-repo.org/packages/"))
 
+;;;;;; packages
+
+  (package-initialize)
+  (require 'package)
   (add-to-list 'package-archives
 	       '("melpa" . "https://melpa.org/packages/") t)
-  ;; (when (< emacs-major-version 24)
-  ;;   ;; For important compatibility libraries like cl-lib
-  ;;   (add-to-list 'package-archives '("gnu" . "http://elpa.gnu.org/packages/")))
-
-  ;; too long!
-  (package-initialize)
 
 
-  ;; (let ((base "~/.emacs.d/"))
-  ;;   (add-to-list 'load-path base)
-  ;;   (dolist (f (directory-files base))
-  ;;     (let ((name (concat base "/" f)))
-  ;;       (when (and (file-directory-p name)
-  ;;                  (not (equal f ".."))
-  ;;                  (not (equal f ".")))
-  ;;         (add-to-list 'load-path name)))))
+
 
 
   ;; TODO
@@ -835,7 +821,7 @@ advice lik this:
   (add-to-list 'load-path "~/.emacs.d/site-lisp/smex")
   (require 'smex) ; Not needed if you use package.el
   (smex-initialize) ; Can be omitted. This might cause a (minimal) delay
-					; when Smex is auto-initialized on its first run.
+					; when Smex is auto-initialized on its first run. ; ;
   (global-set-key (kbd "M-x") 'smex)
   (global-set-key (kbd "M-X") 'smex-major-mode-commands)
   ;; This is your old M-x.
@@ -951,17 +937,17 @@ advice lik this:
   (add-hook 'LaTeX-mode-hook 'ac-latex-mode-setup)
   (ac-flyspell-workaround)
 
-					;reftex ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;reftex ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
   (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
   (setq reftex-plug-into-AUCTeX t)
-					;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; with AUCTeX LaTeX mode ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;(add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; with AUCTeX LaTeX mode ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
   (add-hook 'reftex-load-hook 'imenu-add-menubar-index)
   (add-hook 'reftex-mode-hook 'imenu-add-menubar-index)
-					;For high-speed access, one can bind the imenu to a right mouse click: ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;For high-speed access, one can bind the imenu to a right mouse click: ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
   (global-set-key [down-mouse-3] 'imenu)
 
 
-					;flymake latex syntax checking ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;flymake latex syntax checking ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
   (require 'flymake)
   (defun flymake-get-tex-args (file-name)
     (list "pdflatex"
@@ -970,7 +956,7 @@ advice lik this:
 
 
 
-					;outline mode, allow section folding ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;outline mode, allow section folding ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
   (defun turn-on-outline-minor-mode ()
     (outline-minor-mode 1))
   (add-hook 'LaTeX-mode-hook 'turn-on-outline-minor-mode)
@@ -1395,19 +1381,19 @@ advice lik this:
   ;;        ))
 
 
-					;(add-hook 'find-file-hooks 'auto-insert) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
-					;(setq auto-insert-directory (expand-file-name "~/.autoinsert/")) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
-					;(auto-insert-mode 1) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;(add-hook 'find-file-hooks 'auto-insert) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;(setq auto-insert-directory (expand-file-name "~/.autoinsert/")) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;(auto-insert-mode 1) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 
-					;(setq auto-insert-query t) ;; prompt before insertion ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;(setq auto-insert-query t) ;; prompt before insertion ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 
-					; (setq auto-insert-alist ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
-					;       '(("\.c"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
-					; 	("\.cc"   . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
-					; 	("\.cpp"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
-					; 	("\.h"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
-					; 	("\.hh"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
-					; 	("\.hpp" . "c-template.c"))) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					; (setq auto-insert-alist ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					;       '(("\.c"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					; 	("\.cc"   . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					; 	("\.cpp"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					; 	("\.h"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					; 	("\.hh"  . "c-template.c") ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
+					; 	("\.hpp" . "c-template.c"))) ; ; ; ; ; ; ; ; ; ; ; ; ; ; ; ;
 
 
 
