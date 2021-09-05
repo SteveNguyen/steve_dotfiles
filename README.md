@@ -60,13 +60,17 @@ required packages (M-x package-install):
 - company-irony-c-headers
 - company-auctex
 - company-bibtex
+- company-jedi
+- company-rtags
 - *company-c-header
 - irony-eldoc
 - rtags
 - flycheck-irony
-- string-inflection
 - visual-regexp
 - tabbar-ruller
+- bm
+- vlf
+- filladapt
 - cmake-ide (rtags, flycheck, autocomplete-clang, company-clang, irony, needs clang, libclang, libclang-dev) see: https://github.com/atilaneves/cmake-ide
   (use clang-3.6 libllvm3.8?)
   infos about rtags integration: https://syamajala.github.io/c-ide.html
