@@ -1068,11 +1068,11 @@ advice lik this:
 
   (add-hook 'python-mode-hook 'jedi:setup)
   (setq jedi:complete-on-dot t)
-  (setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi/jediepcserver.py"))
+  ;; (setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi/jediepcserver.py"))
 
 
   ;; unload old and configure new jedi keybindings
-  (setq jedi:environment-virtualenv (list (expand-file-name "~/.emacs.d/.python-environments/")))
+  ;; (setq jedi:environment-virtualenv (list (expand-file-name "~/.emacs.d/.python-environments/")))
 
   (defun jedi-config-keys ()
     (local-set-key (kbd "M-t") 'jedi:goto-definition)
@@ -2353,7 +2353,7 @@ advice lik this:
  '(org-agenda-files
    '("~/Project/Repo/org/kid_public/org_hl_kid/formation/sycu_2.org" "/home/steve/Project/Repo/org/NOTES.org" "/home/steve/Project/Repo/org/TODOs.org" "/home/steve/Project/Repo/org/anr_brouillon.org" "/home/steve/Project/Repo/org/anr_stoch.org" "/home/steve/Project/Repo/org/anr_weaugment.org" "/home/steve/Project/Repo/org/boite.org" "/home/steve/Project/Repo/org/coins.org" "/home/steve/Project/Repo/org/drone.org" "/home/steve/Project/Repo/org/ideas.org" "/home/steve/Project/Repo/org/realtime.org" "/home/steve/Project/Repo/org/robocup.org" "/home/steve/Project/Repo/org/robocup2016.org" "/home/steve/Project/Repo/org/robocup2017.org" "/home/steve/Project/Repo/org/robocup2018.org" "/home/steve/Project/Repo/org/ultraban.org" "/home/steve/Project/Repo/org/waseda.org"))
  '(package-selected-packages
-   '(json-mode yaml-mode color-theme-sanityinc-tomorrow iregister vlf company-jedi jedi-core company-rtags flycheck-rtags ivy-rtags bm flx flx-ido ox-clip fireplace fill-column-indicator eyebrowse magit magithub which-key volatile-highlights visual-regexp-steroids string-inflection sphinx-doc smart-mode-line-powerline-theme rainbow-delimiters py-autopep8 org-bullets org-agenda-property org-ac org neotree irony-eldoc iedit highlight-indent-guides helm-swoop helm-rtags helm-gtags font-lock+ flycheck-pyflakes flycheck-irony flycheck-clangcheck flycheck-clang-tidy flycheck-clang-analyzer doom-themes company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex cmake-mode cmake-ide clang-format cheatsheet calfw-org calfw browse-kill-ring+ auto-complete-c-headers aggressive-indent aggressive-fill-paragraph 2048-game)))
+   '(markdown-preview-mode markdown-mode cask json-mode yaml-mode color-theme-sanityinc-tomorrow iregister vlf company-jedi jedi-core company-rtags flycheck-rtags ivy-rtags bm flx flx-ido ox-clip fireplace fill-column-indicator eyebrowse magit magithub which-key volatile-highlights visual-regexp-steroids string-inflection sphinx-doc smart-mode-line-powerline-theme rainbow-delimiters py-autopep8 org-bullets org-agenda-property org-ac org neotree irony-eldoc iedit highlight-indent-guides helm-swoop helm-rtags helm-gtags font-lock+ flycheck-pyflakes flycheck-irony flycheck-clangcheck flycheck-clang-tidy flycheck-clang-analyzer doom-themes company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex cmake-mode cmake-ide clang-format cheatsheet calfw-org calfw browse-kill-ring+ auto-complete-c-headers aggressive-indent aggressive-fill-paragraph 2048-game)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

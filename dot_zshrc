@@ -53,7 +53,7 @@ plugins=(git fasd)
 
 # User configuration
 
-#export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games"
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/home/steve/.local/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -119,12 +119,13 @@ alias gre='grep -InH' #ignore binary, print file name and line
 alias grec='grep -InH --include \*.hpp --include \*.cpp --include \*.c --include \*.h --include \*.cc --include \*.hh --include \*.py' #ignore binary, print file name and line
 alias rless='less -r'
 alias lh='ls -lrth'
+alias s='source ~/.zshrc'
 
 XMODIFIERS=emacs
 alias emacs='emacs27 -mm' #emacs maximised
 
 alias kk='kill -9 %%' #kill the stopped process
-
+alias python='python3'
 #always complete the first match
 #setopt MENU_COMPLETE
 
@@ -135,20 +136,37 @@ unsetopt share_history
 #symbolic links (go to the real path by default)
 set -w
 
+#better 'less' (with sudo apt install source-highlight)
+export LESSOPEN="| /usr/share/source-highlight/src-hilite-lesspipe.sh %s"
+export LESS=' -R '
+
+
 #stupid makerware
 alias makerware="env LC_ALL=\"en_US.UTF-8\" makerware"
 
 #VREP_STUFF
 # export #LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/steve/divers/VREP/V-REP_PRO_EDU_V3_1_3_rev2b_64_Linux"
 
-source /opt/ros/melodic/setup.zsh
-source /home/steve/Project/DEV/catkin_ws/devel/setup.zsh
-source /home/steve/Project/DEV/catkin_ws/install/setup.zsh
+#source /opt/ros/melodic/setup.zsh
+#source /home/steve/Project/DEV/catkin_ws/devel/setup.zsh
+#source /home/steve/Project/DEV/catkin_ws/install/setup.zsh
 #source /home/steve/Project/DEV/catkin_ws/devel_isolated/setup.zsh
 #source /home/steve/Project/DEV/catkin_ws/install_isolated/setup.zsh
 # export #ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:/home/steve/Project/DEV/catkin_ws:/home/steve/Project/DEV/catkin_ws/src/hector_quadrotor #has been
-export ROSCONSOLE_FORMAT='[${severity}] [${node}] [${time}]: ${message}'
 
+#ROS2
+source /opt/ros/foxy/setup.zsh
+source /opt/ros/foxy/share/ros2cli/environment/ros2-argcomplete.zsh
+source /home/steve/Project/DEV/ros2_ws/install/setup.zsh
+#source /usr/share/colcon_cd/function/colcon_cd.sh
+source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.zsh
+#export _colcon_cd_root=~/Project/DEV/ros2_ws
+export COLCON_WS=/home/steve/Project/DEV/ros2_ws
+
+# export ROSCONSOLE_FORMAT='[${severity}] [${node}] [${time}]: ${message}'
+# export RCUTILS_CONSOLE_OUTPUT_FORMAT='[${severity}] [${node}] [${time}]: ${message}'
+export RCUTILS_CONSOLE_OUTPUT_FORMAT="[{severity} {time}] [{name}]: {message} ({function_name}() at {file_name}:{line_number})"
+export RCUTILS_COLORIZED_OUTPUT=1
 
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr/local/lib/pkgconfig
 
@@ -159,7 +177,11 @@ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib/x86_64-linux-gnu/pkgconfig:/usr
 # export ROS_MASTER_URI=http://bipbip-fit-PC4.local:11311/
 
 
-export ROS_HOSTNAME=steve-dell.local
+#export ROS_HOSTNAME=steve-thinkpad.local
+
+#export ROS_LOCALHOST_ONLY=1
+
+export ROS_DOMAIN_ID=1
 
 # export GAZEBO_MASTER_URI=http://steve-hp.local:11345
 # export GAZEBO_MASTER_URI=http://tower.local:11345
@@ -196,8 +218,12 @@ export NO_AT_BRIDGE=1
 
 #PROMPT="$fg[cyan]%}$USER@%{$fg[blue]%}%m${PROMPT}"
 
-export PATH="$HOME/divers/dfu-util/src:$PATH"
-export PATH="$PATH:/home/steve/Project/Repo/workspace/devel_release/lib/RhIOShell/"
+#export PATH="$HOME/divers/dfu-util/src:$PATH"
+#export PATH="$PATH:/home/steve/Project/Repo/workspace/devel_release/lib/RhIOShell/"
 
 #otherwise rviz shows nothing
 export LC_NUMERIC="en_US.UTF-8"
+
+
+#RUST
+source $HOME/.cargo/env
