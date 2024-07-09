@@ -119,7 +119,8 @@ alias gre='grep -InH' #ignore binary, print file name and line
 alias grec='grep -InH --include \*.hpp --include \*.cpp --include \*.c --include \*.h --include \*.cc --include \*.hh --include \*.py' #ignore binary, print file name and line
 alias rless='less -r'
 alias lh='ls -lrth'
-alias s='source ~/.zshrc'
+alias sb='source ~/.zshrc'
+alias rd='ros2 daemon stop && ros2 daemon start'
 
 XMODIFIERS=emacs
 alias emacs='emacs27 -mm' #emacs maximised
@@ -155,13 +156,13 @@ alias makerware="env LC_ALL=\"en_US.UTF-8\" makerware"
 # export #ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:/home/steve/Project/DEV/catkin_ws:/home/steve/Project/DEV/catkin_ws/src/hector_quadrotor #has been
 
 #ROS2
-source /opt/ros/foxy/setup.zsh
-source /opt/ros/foxy/share/ros2cli/environment/ros2-argcomplete.zsh
-source /home/steve/Project/DEV/ros2_ws/install/setup.zsh
+# source /opt/ros/foxy/setup.zsh
+# source /opt/ros/foxy/share/ros2cli/environment/ros2-argcomplete.zsh
+# source /home/steve/Project/DEV/ros2_ws/install/setup.zsh
 #source /usr/share/colcon_cd/function/colcon_cd.sh
-source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.zsh
+# source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.zsh
 #export _colcon_cd_root=~/Project/DEV/ros2_ws
-export COLCON_WS=/home/steve/Project/DEV/ros2_ws
+# export COLCON_WS=/home/steve/Project/DEV/ros2_ws
 
 # export ROSCONSOLE_FORMAT='[${severity}] [${node}] [${time}]: ${message}'
 # export RCUTILS_CONSOLE_OUTPUT_FORMAT='[${severity}] [${node}] [${time}]: ${message}'
@@ -185,6 +186,8 @@ export ROS_DOMAIN_ID=1
 
 # export GAZEBO_MASTER_URI=http://steve-hp.local:11345
 # export GAZEBO_MASTER_URI=http://tower.local:11345
+
+#export GAZEBO_MODEL_PATH=/home/steve/Project/Repo/ardupilot_gazebo
 
 
 #BVS STUFFS
@@ -227,3 +230,23 @@ export LC_NUMERIC="en_US.UTF-8"
 
 #RUST
 source $HOME/.cargo/env
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/steve/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/steve/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/steve/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/steve/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

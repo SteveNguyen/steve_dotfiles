@@ -65,10 +65,20 @@
 
       C-x C-v RET: reload file from disk
 
-      M-t : rtags jump to definition
-      M-r : jump back
-      M-s : find symbol
-      M-i : symbol info
+      C-c v : SMerge prefix
+      C-c v RET: keep current
+
+      S-l : LSP prefix
+      S-l g g : LSP go to definition
+      S-l g r : LSP go to references
+      S-l g i : LSP go to implementation
+      S-l g s : LSP go to symbol
+      S-l g t : LSP go to type definition
+      S-l g d : LSP go to declaration
+      S-l g f : LSP go to file
+      S-l g a : LSP find all meaningfull matching symbols
+      S-l r r : LSP rename symbol and all its occurence
+      S-l a a : LSP code action
 
       C-; : simultaneous edit different regions with same string
 
@@ -102,7 +112,8 @@
   ;; zone: screensaver 10min
   ;; (setq zone-timer (run-with-idle-timer 600 t 'zone))
 
-
+  ;; opened buffer name in window name
+  (setq-default frame-title-format '("%f"))
 
   ;;show in which function we are (tends to freeze with python)
   (which-func-mode 1)
@@ -125,12 +136,75 @@
 
 ;;;;;; packages
 
-  (package-initialize)
+
   (require 'package)
   (add-to-list 'package-archives
 	       '("melpa" . "https://melpa.org/packages/") t)
+  (package-initialize)
+
+;;; use-package
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package))
+  (eval-and-compile
+    (setq use-package-always-ensure t
+          use-package-expand-minimally t))
+  (require 'use-package)
+
+  (require 'package)
 
 
+  ;; (package-initialize)
+
+  ;; (add-to-list 'load-path "/home/steve/Project/Repo/steve_dotfiles/dot_emacs_d/elpa/use-package-20230203.2004")
+  ;; (require 'use-package)
+
+
+  ;; straight.el
+  ;; (defvar bootstrap-version)
+  ;; (let ((bootstrap-file
+  ;; 	 (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+  ;; 	(bootstrap-version 6))
+  ;;   (unless (file-exists-p bootstrap-file)
+  ;;     (with-current-buffer
+  ;;         (url-retrieve-synchronously
+  ;;          "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+  ;;          'silent 'inhibit-cookies)
+  ;; 	(goto-char (point-max))
+  ;; 	(eval-print-last-sexp)))
+  ;;   (load bootstrap-file nil 'nomessage))
+
+  ;; (setq package-enable-at-startup nil)
+  ;;;;; quelpa
+  ;; (unless (package-installed-p 'quelpa)
+  ;; (with-temp-buffer
+  ;;   (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
+  ;;   (eval-buffer)
+  ;;   (quelpa-self-upgrade)))
+  ;; (require 'quelpa)
+
+  ;; (use-package quelpa
+  ;;   :ensure t
+  ;;   :defer t
+  ;;   :config
+  ;;   (setq quelpa-melpa-recipe-stores '("~/.ghq/github.com/melpa/melpa/recipes"))
+  ;;   (setq quelpa-update-melpa-p nil)
+  ;;   (setq quelpa-melpa-dir "~/.ghq/github.com/melpa/melpa"))
+  ;; ;; (require 'quelpa)
+  ;; ;; (use-package quelpa-use-package
+  ;;   ;; :ensure t)
+  ;; ;; (require 'quelpa-use-package)
+
+  ;; (quelpa
+  ;;  '(quelpa-use-package
+  ;;    :fetcher git
+  ;;    :url "https://github.com/quelpa/quelpa-use-package.git"))
+  ;; (require 'quelpa-use-package)
+
+  ;; (with-eval-after-load 'info
+  ;;   (info-initialize)
+  ;;   (add-to-list 'Info-directory-list
+  ;; 		 "~/.emacs.d/site-lisp/use-package/"))
 
 
 
@@ -293,6 +367,10 @@
   (add-to-list 'load-path "~/.emacs.d/site-lisp/nyan-mode")
   (setq nyan-wavy-trail t)
   (require 'nyan-mode)
+
+
+  ;; ActivityWatch
+  ;;  (global-activity-watch-mode)
 
   ;; Org to s5 html presentation
   ;; (add-to-list 'load-path "~/.emacs.d/site-lisp/org-s5")
@@ -487,6 +565,9 @@
 
   ;; better handling of large files
   (require 'vlf-setup)
+
+  ;; disable smartparens propagation in modes
+  ;; (setq smartparens-global-mode -1)
 
 
   ;; move through windows
@@ -1018,11 +1099,14 @@ advice lik this:
   ;; (add-hook 'python-mode-hook 'smart-operator-mode)
 
   ;; syntax checking
-  (require 'flycheck-pyflakes)
+  ;; (require 'flycheck-pyflakes)
+  ;; (add-hook 'python-mode-hook 'flycheck-mode)
+
+  (require 'flycheck-mypy)
   (add-hook 'python-mode-hook 'flycheck-mode)
 
   ;; disable the slow ones
-  ;; (add-to-list 'flycheck-disabled-checkers 'python-flake8)
+  (add-to-list 'flycheck-disabled-checkers 'python-flake8)
   (add-to-list 'flycheck-disabled-checkers 'python-pylint)
 
   ;; (eval-after-load 'flycheck
@@ -1061,46 +1145,61 @@ advice lik this:
 
   ;; (setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi/jediepcserver.py"))
   ;; (setq jedi:tooltip-method '(pos-tip))
-  (setq jedi:tooltip-method '(nil))
-  ;; company-jedi
-  ;;not sure...
-  (require 'company-jedi)
-
-  (add-hook 'python-mode-hook 'jedi:setup)
-  (setq jedi:complete-on-dot t)
-  ;; (setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi/jediepcserver.py"))
 
 
-  ;; unload old and configure new jedi keybindings
-  ;; (setq jedi:environment-virtualenv (list (expand-file-name "~/.emacs.d/.python-environments/")))
-
-  (defun jedi-config-keys ()
-    (local-set-key (kbd "M-t") 'jedi:goto-definition)
-    ;; (local-set-key (kbd "M-,") 'jedi:goto-definition-pop-marker)
-    (local-set-key (kbd "<f1>") 'jedi:show-doc)
-    ;; (local-set-key (kbd "M-/") 'jedi:get-in-function-call))
-    )
-  (eval-after-load 'jedi
-    '(progn
-       (define-key jedi-mode-map (kbd "C-c .") nil)
-       (define-key jedi-mode-map (kbd "C-c ,") nil)))
-
-  (defun my/python-mode-hook ()
-    (add-to-list 'company-backends 'company-jedi)
-    )
 
 
-  (defun run-python-once ()
-    (remove-hook 'python-mode-hook 'run-python-once)
-    (run-python (python-shell-parse-command)))
 
 
-  (add-hook 'python-mode-hook 'my/python-mode-hook)
-  ;; (add-hook 'python-mode-hook 'run-python-once)
-  (add-hook 'python-mode-hook 'jedi-config-keys)
-  ;; (add-hook 'python-mode-hook (lambda ()
-  ;; 			      (require 'sphinx-doc)
-  ;; 			      (sphinx-doc-mode t)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;; PYTHON
+
+
+  ;; (setq jedi:tooltip-method '(nil))
+  ;; ;; company-jedi
+  ;; ;;not sure...
+  ;; (require 'company-jedi)
+
+  ;; (add-hook 'python-mode-hook 'jedi:setup)
+  ;; (setq jedi:complete-on-dot t)
+  ;; ;; (setq jedi:server-command '("python" "/home/steve/.emacs.d/elpa/jedi/jediepcserver.py"))
+
+
+  ;; ;; unload old and configure new jedi keybindings
+  ;; ;; (setq jedi:environment-virtualenv (list (expand-file-name "~/.emacs.d/.python-environments/")))
+
+  ;; (defun jedi-config-keys ()
+  ;;   (local-set-key (kbd "M-t") 'jedi:goto-definition)
+  ;;   ;; (local-set-key (kbd "M-,") 'jedi:goto-definition-pop-marker)
+  ;;   (local-set-key (kbd "<f1>") 'jedi:show-doc)
+  ;;   ;; (local-set-key (kbd "M-/") 'jedi:get-in-function-call))
+  ;;   )
+  ;; (eval-after-load 'jedi
+  ;;   '(progn
+  ;;      (define-key jedi-mode-map (kbd "C-c .") nil)
+  ;;      (define-key jedi-mode-map (kbd "C-c ,") nil)))
+
+  ;; (defun my/python-mode-hook ()
+  ;;   (add-to-list 'company-backends 'company-jedi)
+  ;;   )
+
+
+  ;; (defun run-python-once ()
+  ;;   (remove-hook 'python-mode-hook 'run-python-once)
+  ;;   (run-python (python-shell-parse-command)))
+
+
+  ;; (add-hook 'python-mode-hook 'my/python-mode-hook)
+  ;; ;; (add-hook 'python-mode-hook 'run-python-once)
+  ;; (add-hook 'python-mode-hook 'jedi-config-keys)
+  ;; ;; (add-hook 'python-mode-hook (lambda ()
+  ;; ;; 			      (require 'sphinx-doc)
+  ;; ;; 			      (sphinx-doc-mode t)))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
 
   ;; Configure flymake with pylint for Python
   ;; (when (load "flymake" t)
@@ -1140,9 +1239,20 @@ advice lik this:
 
 
   ;;auto pep8 M-x package-install py-autopep8 (sudo pip install pep8 autopep8)
-  (require 'py-autopep8)
-  (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+  ;; (require 'py-autopep8)
+  ;; (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
+  ;; (setq py-autopep8-options '("--max-line-length=360"))
 
+  ;; python formatter
+  (use-package python-black
+  :demand t
+  :after python
+  :hook (python-mode . python-black-on-save-mode-enable-dwim))
+
+
+  ;; python isort
+  (require 'python-isort)
+  (add-hook 'python-mode-hook 'python-isort-on-save-mode)
 
 
   ;;ein ipython notebook
@@ -1248,6 +1358,8 @@ advice lik this:
   (add-to-list 'ac-modes 'web-mode)
 
 
+  ;; change SMERGE prefix to "CTRL-c v"
+  (setq smerge-command-prefix "\C-cv")
 
 
   (setq c-default-style "linux")
@@ -1266,6 +1378,222 @@ advice lik this:
 
   ;; coloring the delimiters () {} [] differently by depth
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+
+(use-package s)
+(use-package dash)
+(use-package editorconfig)
+
+
+(defun rk/copilot-tab ()
+  "Tab command that will complet with copilot if a completion is
+available. Otherwise will try company, yasnippet or normal
+tab-indent."
+  (interactive)
+  (or (copilot-accept-completion)
+      (company-yasnippet-or-completion)
+      (indent-for-tab-command)))
+
+(defun rk/copilot-complete-or-accept ()
+  "Command that either triggers a completion or accepts one if one
+is available. Useful if you tend to hammer your keys like I do."
+  (interactive)
+  (if (copilot--overlay-visible)
+      (progn
+        (copilot-accept-completion)
+        (open-line 1)
+        (next-line))
+    (copilot-complete)))
+
+(defun rk/copilot-quit ()
+  "Run `copilot-clear-overlay' or `keyboard-quit'. If copilot is
+cleared, make sure the overlay doesn't come back too soon."
+  (interactive)
+  (condition-case err
+      (when copilot--overlay
+        (lexical-let ((pre-copilot-disable-predicates copilot-disable-predicates))
+          (setq copilot-disable-predicates (list (lambda () t)))
+          (copilot-clear-overlay)
+          (run-with-idle-timer
+           1.0
+           nil
+           (lambda ()
+             (setq copilot-disable-predicates pre-copilot-disable-predicates)))))
+    (error handler)))
+
+(defun rk/copilot-complete-if-active (next-func n)
+  (let ((completed (when copilot-mode (copilot-accept-completion))))
+    (unless completed (funcall next-func n))))
+
+(defun rk/no-copilot-mode ()
+  "Helper for `rk/no-copilot-modes'."
+  (copilot-mode -1))
+
+(defvar rk/no-copilot-modes '(shell-mode
+                              inferior-python-mode
+                              eshell-mode
+                              term-mode
+                              vterm-mode
+                              comint-mode
+                              compilation-mode
+                              debugger-mode
+                              dired-mode-hook
+                              compilation-mode-hook
+                              flutter-mode-hook
+                              minibuffer-mode-hook)
+  "Modes in which copilot is inconvenient.")
+
+(defvar rk/copilot-manual-mode nil
+  "When `t' will only show completions when manually triggered, e.g. via M-C-<return>.")
+
+(defvar rk/copilot-enable-for-org nil
+  "Should copilot be enabled for org-mode buffers?")
+
+
+(defun rk/copilot-enable-predicate ()
+  ""
+  (and
+   (eq (get-buffer-window) (selected-window))))
+
+(defun rk/copilot-disable-predicate ()
+  "When copilot should not automatically show completions."
+  (or rk/copilot-manual-mode
+      (member major-mode rk/no-copilot-modes)
+      (and (not rk/copilot-enable-for-org) (eq major-mode 'org-mode))
+      (company--active-p)))
+
+(defun rk/copilot-change-activation ()
+  "Switch between three activation modes:
+- automatic: copilot will automatically overlay completions
+- manual: you need to press a key (M-C-<return>) to trigger completions
+- off: copilot is completely disabled."
+  (interactive)
+  (if (and copilot-mode rk/copilot-manual-mode)
+      (progn
+        (message "deactivating copilot")
+        (global-copilot-mode -1)
+        (setq rk/copilot-manual-mode nil))
+    (if copilot-mode
+        (progn
+          (message "activating copilot manual mode")
+          (setq rk/copilot-manual-mode t))
+      (message "activating copilot mode")
+      (global-copilot-mode))))
+
+(defun rk/copilot-toggle-for-org ()
+  "Toggle copilot activation in org mode. It can sometimes be
+annoying, sometimes be useful, that's why this can be handly."
+  (interactive)
+  (setq rk/copilot-enable-for-org (not rk/copilot-enable-for-org))
+  (message "copilot for org is %s" (if rk/copilot-enable-for-org "enabled" "disabled")))
+
+;; load the copilot package
+(use-package copilot
+  :load-path ( "~/.emacs.d/copilot.el" )
+
+  ;; :diminish ;; don't show in mode line (we don't wanna get caught cheating, right? ;)
+
+  :config
+  ;; keybindings that are active when copilot shows completions
+  (define-key copilot-mode-map (kbd "M-C-<next>") #'copilot-next-completion)
+  (define-key copilot-mode-map (kbd "M-C-<prior>") #'copilot-previous-completion)
+  (define-key copilot-mode-map (kbd "M-C-S-<right>") #'copilot-accept-completion-by-word)
+  (define-key copilot-mode-map (kbd "M-C-S-<down>") #'copilot-accept-completion-by-line)
+
+  ;; global keybindings
+  (define-key global-map (kbd "M-C-<tab>") #'rk/copilot-complete-or-accept)
+  (define-key global-map (kbd "M-C-<escape>") #'rk/copilot-change-activation)
+
+  ;; Do copilot-quit when pressing C-g
+  (advice-add 'keyboard-quit :before #'rk/copilot-quit)
+
+  ;; complete by pressing right or tab but only when copilot completions are
+  ;; shown. This means we leave the normal functionality intact.
+  ;; (advice-add 'right-char :around #'rk/copilot-complete-if-active)
+  ;; (advice-add 'indent-for-tab-command :around #'rk/copilot-complete-if-active)
+
+  ;; deactivate copilot for certain modes
+  (add-to-list 'copilot-enable-predicates #'rk/copilot-enable-predicate)
+  (add-to-list 'copilot-disable-predicates #'rk/copilot-disable-predicate))
+
+(eval-after-load 'copilot
+  '(progn
+     ;; Note company is optional but given we use some company commands above
+     ;; we'll require it here. If you don't use it, you can remove all company
+     ;; related code from this file, copilot does not need it.
+     (require 'company)
+     (global-copilot-mode)))
+
+;; (copilot-login)
+
+;;; ---- CUSTOM COPILOT
+
+
+;;; codeium
+  ;; (straight-use-package '(codeium :type git :host github :repo "Exafunction/codeium.el"))
+  ;; ;; we recommend using use-package to organize your init.el
+  ;; (use-package codeium
+  ;;   ;; if you use straight
+  ;;   ;; :straight '(:type git :host github :repo "Exafunction/codeium.el")
+  ;;   ;; otherwise, make sure that the codeium.el file is on load-path
+
+  ;;   :init
+  ;;   ;; use globally
+  ;;   (add-to-list 'completion-at-point-functions #'codeium-completion-at-point)
+  ;;   ;; or on a hook
+  ;;   ;; (add-hook 'python-mode-hook
+  ;;   ;;     (lambda ()
+  ;;   ;;         (setq-local completion-at-point-functions '(codeium-completion-at-point))))
+
+  ;;   ;; if you want multiple completion backends, use cape (https://github.com/minad/cape):
+  ;;   ;; (add-hook 'python-mode-hook
+  ;;   ;;     (lambda ()
+  ;;   ;;         (setq-local completion-at-point-functions
+  ;;   ;;             (list (cape-super-capf #'codeium-completion-at-point #'lsp-completion-at-point)))))
+  ;;   ;; an async company-backend is coming soon!
+
+  ;;   ;; codeium-completion-at-point is autoloaded, but you can
+  ;;   ;; optionally set a timer, which might speed up things as the
+  ;;   ;; codeium local language server takes ~0.2s to start up
+  ;;   ;; (add-hook 'emacs-startup-hook
+  ;;   ;;  (lambda () (run-with-timer 0.1 nil #'codeium-init)))
+
+  ;;   ;; :defer t ;; lazy loading, if you want
+  ;;   :config
+  ;;   (setq use-dialog-box nil) ;; do not use popup boxes
+
+  ;;   ;; if you don't want to use customize to save the api-key
+  ;;   ;; (setq codeium/metadata/api_key "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx")
+  ;;   (setq codeium/metadata/api_key "701ca98b-08e6-3bfb-60e2-b655e1aad1ee")
+  ;;   ;; get codeium status in the modeline
+  ;;   (setq codeium-mode-line-enable
+  ;;       (lambda (api) (not (memq api '(CancelRequest Heartbeat AcceptCompletion)))))
+  ;;   (add-to-list 'mode-line-format '(:eval (car-safe codeium-mode-line)) t)
+  ;;   ;; alternatively for a more extensive mode-line
+  ;;   ;; (add-to-list 'mode-line-format '(-50 "" codeium-mode-line) t)
+
+  ;;   ;; use M-x codeium-diagnose to see apis/fields that would be sent to the local language server
+  ;;   (setq codeium-api-enabled
+  ;;       (lambda (api)
+  ;;           (memq api '(GetCompletions Heartbeat CancelRequest GetAuthToken RegisterUser auth-redirect AcceptCompletion))))
+  ;;   ;; you can also set a config for a single buffer like this:
+  ;;   ;; (add-hook 'python-mode-hook
+  ;;   ;;     (lambda ()
+  ;;   ;;         (setq-local codeium/editor_options/tab_size 4)))
+
+  ;;   ;; You can overwrite all the codeium configs!
+  ;;   ;; for example, we recommend limiting the string sent to codeium for better performance
+  ;;   (defun my-codeium/document/text ()
+  ;;       (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (min (+ (point) 1000) (point-max))))
+  ;;   ;; if you change the text, you should also change the cursor_offset
+  ;;   ;; warning: this is measured by UTF-8 encoded bytes
+  ;;   (defun my-codeium/document/cursor_offset ()
+  ;;       (codeium-utf8-byte-length
+  ;;           (buffer-substring-no-properties (max (- (point) 3000) (point-min)) (point))))
+  ;;   (setq codeium/document/text 'my-codeium/document/text)
+  ;;   (setq codeium/document/cursor_offset 'my-codeium/document/cursor_offset))
+
+
 
   ;; because same random jerk prefer this style...
   (defun ROS-c-mode-hook()
@@ -1321,6 +1649,9 @@ advice lik this:
 	  ("\\.json$" . json-mode)
 	  ("\\.xml$" . xml-mode)
 	  ("\\.launch$" . xml-mode)
+	  ("\\.rs$" . rustic-mode)
+	  ("\\.toml". toml-mode)
+	  ("\\.yaml". yaml-mode)
 	  )
 	)
 
@@ -1573,7 +1904,7 @@ advice lik this:
 
 
   ;; AGRESSIVE INDENT
-  (global-aggressive-indent-mode 1)
+  (global-aggressive-indent-mode 0)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; WIP TESTING
@@ -1622,99 +1953,233 @@ advice lik this:
 
   ;; company-mode auto completion
   (add-hook 'after-init-hook 'global-company-mode)
+  ;; different frontend for the company completinn list
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;; C++
+
+  ;; ;; =============
+  ;; ;; irony-mode (C++ completion)
+  ;; ;; =============
+  ;; (add-hook 'c++-mode-hook 'irony-mode)
+  ;; (add-hook 'c-mode-hook 'irony-mode)
+  ;; ;; =============
+  ;; ;; company mode
+  ;; ;; =============
+  ;; ;; (add-hook 'c++-mode-hook 'company-mode)
+  ;; ;; (add-hook 'c-mode-hook 'company-mode)
+  ;; ;; replace the `completion-at-point' and `complete-symbol' bindings in
+  ;; ;; irony-mode's buffers by irony-mode's function
+  ;; (defun my-irony-mode-hook ()
+  ;;   (yas-minor-mode 1)
+  ;;   (auto-complete-mode 1)
+  ;;   (define-key irony-mode-map [remap completion-at-point]
+  ;;     'irony-completion-at-point-async)
+  ;;   (define-key irony-mode-map [remap complete-symbol]
+  ;;     'irony-completion-at-point-async))
+  ;; (add-hook 'irony-mode-hook 'my-irony-mode-hook)
+  ;; (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
 
 
-  ;; =============
-  ;; irony-mode (C++ completion)
-  ;; =============
-  (add-hook 'c++-mode-hook 'irony-mode)
-  (add-hook 'c-mode-hook 'irony-mode)
-  ;; =============
-  ;; company mode
-  ;; =============
-  ;; (add-hook 'c++-mode-hook 'company-mode)
-  ;; (add-hook 'c-mode-hook 'company-mode)
-  ;; replace the `completion-at-point' and `complete-symbol' bindings in
-  ;; irony-mode's buffers by irony-mode's function
-  (defun my-irony-mode-hook ()
-    (yas-minor-mode 1)
-    (auto-complete-mode 1)
-    (define-key irony-mode-map [remap completion-at-point]
-      'irony-completion-at-point-async)
-    (define-key irony-mode-map [remap complete-symbol]
-      'irony-completion-at-point-async))
-  (add-hook 'irony-mode-hook 'my-irony-mode-hook)
-  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+  ;; (eval-after-load 'company
+  ;;   '(add-to-list 'company-backends 'company-irony))
+  ;; (require 'company-irony-c-headers)
+  ;; (eval-after-load 'company
+  ;;   '(add-to-list
+  ;;     'company-backends '(company-irony-c-headers company-irony)))
 
+  ;; ;; (optional) adds CC special commands to `company-begin-commands' in order to
+  ;; ;; trigger completion at interesting places, such as after scope operator
+  ;; ;;     std::|
+  ;; (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
+  ;; ;; =============
+  ;; ;; flycheck-mode
+  ;; ;; =============
+  ;; (add-hook 'c++-mode-hook 'flycheck-mode)
+  ;; (add-hook 'c-mode-hook 'flycheck-mode)
+  ;; (eval-after-load 'flycheck
+  ;;   '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
+  ;; (add-hook 'c++-mode-hook
+  ;;           (lambda () (setq flycheck-clang-language-standard "c++11")))
 
-  (eval-after-load 'company
-    '(add-to-list 'company-backends 'company-irony))
-  (require 'company-irony-c-headers)
-  (eval-after-load 'company
-    '(add-to-list
-      'company-backends '(company-irony-c-headers company-irony)))
-
-  ;; (optional) adds CC special commands to `company-begin-commands' in order to
-  ;; trigger completion at interesting places, such as after scope operator
-  ;;     std::|
-  (add-hook 'irony-mode-hook 'company-irony-setup-begin-commands)
-  ;; =============
-  ;; flycheck-mode
-  ;; =============
-  (add-hook 'c++-mode-hook 'flycheck-mode)
-  (add-hook 'c-mode-hook 'flycheck-mode)
-  (eval-after-load 'flycheck
-    '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))
-  (add-hook 'c++-mode-hook
-            (lambda () (setq flycheck-clang-language-standard "c++11")))
-
-  ;; (setq flycheck-display-errors-function 'flycheck-pos-tip-mode)
-
-  ;; Doesn't work?
-  ;; ;; flycheck rtags
-  ;; (require 'flycheck-rtags)
-
-  ;; (defun my-flycheck-rtags-setup ()
-  ;;   (flycheck-select-checker 'rtags)
-  ;;   (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
-  ;;   (setq-local flycheck-check-syntax-automatically nil))
-  ;; ;; c-mode-common-hook is also called by c++-mode
-  ;; (add-hook 'c-mode-common-hook 'my-flycheck-rtags-setup)
 
 
   ;; rtags
-  (require 'rtags)
-  ;; (add-hook 'c-mode-common-hook 'rtags-start-process-unless-running)
-  ;; (add-hook 'c++-mode-common-hook 'rtags-start-process-unless-running)
-  ;; cmake-ide (seems good)
-  (cmake-ide-setup)
-  (setq cmake-ide-flags-c++ (append '("-std=c++11")))
+  ;; (require 'rtags)
+
+  ;; ;; cmake-ide (seems good)
+  ;; (cmake-ide-setup)
+  ;; (setq cmake-ide-flags-c++ (append '("-std=c++11")))
 
 
 
-  (require 'company-rtags)
+  ;; (require 'company-rtags)
 
-  (setq rtags-completions-enabled t)
-  (eval-after-load 'company
-    '(add-to-list
-      'company-backends 'company-rtags))
-  (setq rtags-autostart-diagnostics t)
-  (rtags-enable-standard-keybindings)
-  (require 'helm-rtags)
-  (setq rtags-use-helm t)
-  (setq rtags-display-result-backend 'helm)
+  ;; (setq rtags-completions-enabled t)
+  ;; (eval-after-load 'company
+  ;;   '(add-to-list
+  ;;     'company-backends 'company-rtags))
+  ;; (setq rtags-autostart-diagnostics t)
+  ;; (rtags-enable-standard-keybindings)
+  ;; (require 'helm-rtags)
+  ;; (setq rtags-use-helm t)
+  ;; (setq rtags-display-result-backend 'helm)
 
-  (define-key c-mode-base-map (kbd "M-t") (function rtags-find-symbol-at-point))
-  (define-key c-mode-base-map (kbd "M-r") (function rtags-location-stack-back))
-  (define-key c-mode-base-map (kbd "M-s") (function rtags-find-all-references-at-point))
-  (define-key c-mode-base-map (kbd "M-i") (function rtags-symbol-info))
-  (define-key c-mode-base-map (kbd "M-v") (function rtags-find-virtuals-at-point))
+  ;; (define-key c-mode-base-map (kbd "M-t") (function rtags-find-symbol-at-point))
+  ;; (define-key c-mode-base-map (kbd "M-r") (function rtags-location-stack-back))
+  ;; (define-key c-mode-base-map (kbd "M-s") (function rtags-find-all-references-at-point))
+  ;; (define-key c-mode-base-map (kbd "M-i") (function rtags-symbol-info))
+  ;; (define-key c-mode-base-map (kbd "M-v") (function rtags-find-virtuals-at-point))
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ;;; toml
+  (require 'toml-mode)
+
+;;; yaml
+
+   (require 'yaml-mode)
+   (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+    (add-hook 'yaml-mode-hook
+    '(lambda ()
+       (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+
+
+  ;;;;;;;;;;;;;;;;;; RUST
+
+  (use-package rustic
+    :ensure
+    :bind (:map rustic-mode-map
+		("M-j" . lsp-ui-imenu)
+		("M-?" . lsp-find-references)
+		("C-c C-c l" . flycheck-list-errors)
+		("C-c C-c a" . lsp-execute-code-action)
+		("C-c C-c r" . lsp-rename)
+		("C-c C-c q" . lsp-workspace-restart)
+		("C-c C-c Q" . lsp-workspace-shutdown)
+		("C-c C-c s" . lsp-rust-analyzer-status)
+		("C-c C-c e" . lsp-rust-analyzer-expand-macro)
+		("C-c C-c d" . dap-hydra)
+		("C-c C-c h" . lsp-ui-doc-glance))
+    :config
+    ;; uncomment for less flashiness
+    ;; (setq lsp-eldoc-hook nil)
+    ;; (setq lsp-enable-symbol-highlighting nil)
+    ;; (setq lsp-signature-auto-activate nil)
+
+    ;; comment to disable rustfmt on save
+    (setq rustic-rustfmt-args "+nightly")
+    ;; (setq rustic-rustfmt-config-alist '((hard_tabs . t) (skip_children . nil)))
+    (setq rustic-format-on-save t) ;;rustfmt OR clippy
+    ;; (setq rustic-cargo-clippy-trigger-fix 'on-save) ;; Clippy change files without showing...
+
+    ;; (setq rustic-flycheck-clippy-params "--message-format=json")
+    (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
+
+  (defun rk/rustic-mode-hook ()
+    ;; so that run C-c C-c C-r works without having to confirm, but don't try to
+    ;; save rust buffers that are not file visiting. Once
+    ;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
+    ;; no longer be necessary.
+    (when buffer-file-name
+      (setq-local buffer-save-without-query t)))
+
+
+  ;;;;;;;;;;;;;;;;;;
+
+  (use-package lsp-pyright
+    :hook (python-mode . (lambda () (require 'lsp-pyright)))
+    :init (when (executable-find "python3")
+            (setq lsp-pyright-python-executable-cmd "python3")))
+
+  (use-package lsp-mode
+    :hook ((c++-mode c-mode python-mode) . lsp-deferred)
+    :commands lsp
+    :custom
+    ;; what to use when checking on-save. "check" is default, I prefer clippy
+    (lsp-rust-analyzer-cargo-watch-command "clippy")
+    (lsp-eldoc-render-all t)
+    (lsp-idle-delay 0.6)
+    ;; hints
+    (lsp-inlay-hint-enable t)
+    (lsp-inlay-hints-mode)
+    ;; This controls the overlays that display type and other hints inline. Enable
+    ;; / disable as you prefer. Well require a `lsp-workspace-restart' to have an
+    ;; effect on open projects.
+    ;; (lsp-rust-analyzer-inlay-hints-mode "block")
+    (lsp-rust-analyzer-inlay-hints-mode t)
+    (lsp-rust-analyzer-server-display-inlay-hints t)
+    (lsp-rust-analyzer-display-lifetime-elision-hints-enable "skip_trivial")
+    (lsp-rust-analyzer-display-chaining-hints t)
+    (lsp-rust-analyzer-display-lifetime-elision-hints-use-parameter-names nil)
+    (lsp-rust-analyzer-display-closure-return-type-hints t)
+    (lsp-rust-analyzer-display-parameter-hints nil)
+    (lsp-rust-analyzer-display-reborrow-hints nil)
+    :config
+    (add-hook 'lsp-mode-hook 'lsp-ui-mode)
+    )
+
+(use-package lsp-ui
+  :ensure
+  :commands lsp-ui-mode
+  :custom
+  (lsp-ui-peek-always-show t)
+  (lsp-ui-sideline-show-hover nil)
+  (lsp-ui-sideline-show-diagnostics t)
+  (lsp-ui-sideline-show-code-actions t)
+  (lsp-ui-doc-enable nil))
+
+  (with-eval-after-load 'lsp-mode
+    (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration))
+
+  (setq lsp-completion-provider :capf)
+  (setq lsp-idle-delay 0.500)
+  (setq lsp-log-io nil)
+
+  ;; Annoying stuff
+  (setq lsp-enable-links nil)
+  ;; (setq lsp-signature-render-documentation nil)
+  (setq lsp-headerline-breadcrumb-enable nil)
+  ;; (setq lsp-ui-doc-enable nil)
+  (setq lsp-completion-enable-additional-text-edit nil)
+  (setq lsp-enable-folding nil)
+  (setq lsp-enable-imenu nil)
+  (setq lsp-enable-snippet nil)
+  (setq lsp-inlay-hint-enable t)
+
+
+  ;; (use-package lsp-mode
+  ;;   :hook ((c-mode          ; clangd
+  ;;           c++-mode        ; clangd
+  ;;           c-or-c++-mode   ; clangd
+  ;;           python-mode     ; pyright
+  ;;           ) . lsp-deferred)
+  ;;   :commands lsp
+  ;;   :config
+  ;;   (setq lsp-auto-guess-root t)
+  ;;   (setq lsp-log-io nil)
+  ;;   (setq lsp-restart 'auto-restart)
+  ;;   (setq lsp-enable-symbol-highlighting nil)
+  ;;   (setq lsp-enable-on-type-formatting nil)
+  ;;   (setq lsp-signature-auto-activate nil)
+  ;;   (setq lsp-signature-render-documentation nil)
+  ;;   (setq lsp-eldoc-hook nil)
+  ;;   (setq lsp-modeline-code-actions-enable nil)
+  ;;   (setq lsp-modeline-diagnostics-enable nil)
+  ;;   (setq lsp-headerline-breadcrumb-enable nil)
+  ;;   (setq lsp-semantic-tokens-enable nil)
+  ;;   (setq lsp-enable-folding nil)
+  ;;   (setq lsp-enable-imenu nil)
+  ;;   (setq lsp-enable-snippet nil)
+  ;;   (setq read-process-output-max (* 1024 1024)) ;; 1MB
+  ;;   (setq lsp-idle-delay 0.5))
 
 
   ;; lsp-mode TODO
 
   ;; (use-package lsp-mode :commands lsp :ensure t)
-  ;; (use-package lsp-ui :commands lsp-ui-mode :ensure t)
+  (use-package lsp-ui :commands lsp-ui-mode :ensure t)
   ;; (use-package company-lsp
   ;;   :ensure t
   ;;   :commands company-lsp
@@ -1986,15 +2451,17 @@ advice lik this:
   (require 'doom-themes)
 
   ;; Global settings (defaults)
-  (setq doom-themes-enable-bold nil    ; if nil, bold is universally disabled
-	doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+	doom-themes-enable-italic t
+	doom-molokai-brighter-comments nil
+	) ; if nil, italics is universally disabled
 
   ;; Load the theme (doom-one, doom-molokai, etc); keep in mind that each theme
   ;; may have their own settings.
   ;; (load-theme 'doom-one t)
   (load-theme 'doom-molokai t)
   (add-to-list 'custom-theme-load-path "~/.emacs.d/site-lisp/themes")
-  (load-theme 'molokai-overrides t)
+  (load-theme 'molokai-overrides t) ;; Steve modif
 
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
@@ -2007,7 +2474,7 @@ advice lik this:
   ;; (doom-org-default-settings)
 
   ;; (global-set-key [f5] (lambda () (interactive) (load-theme 'doom-opera-light t)))
-  (global-set-key [f5] (lambda () (interactive) (load-theme 'sanityinc-tomorrow-day t)
+  (global-set-key [f5] (lambda () (interactive) (load-theme 'sanityinc-tomorrow-day t) ;;in sunlight conditions
 			 (set-face-background 'hl-line "#BBB")
 			 (set-face-background 'linum "white")
 			 (set-face-foreground 'linum "black")
@@ -2053,7 +2520,8 @@ advice lik this:
   ;;     (blink-matching-open)))
 
   ;; fancy powerline
-  (require 'powerline)
+  ;; (require 'powerline)
+  (use-package powerline)
   (powerline-default-theme)
   ;; (powerline-center-theme)
   ;; (setq powerline-default-separator
@@ -2353,7 +2821,7 @@ advice lik this:
  '(org-agenda-files
    '("~/Project/Repo/org/kid_public/org_hl_kid/formation/sycu_2.org" "/home/steve/Project/Repo/org/NOTES.org" "/home/steve/Project/Repo/org/TODOs.org" "/home/steve/Project/Repo/org/anr_brouillon.org" "/home/steve/Project/Repo/org/anr_stoch.org" "/home/steve/Project/Repo/org/anr_weaugment.org" "/home/steve/Project/Repo/org/boite.org" "/home/steve/Project/Repo/org/coins.org" "/home/steve/Project/Repo/org/drone.org" "/home/steve/Project/Repo/org/ideas.org" "/home/steve/Project/Repo/org/realtime.org" "/home/steve/Project/Repo/org/robocup.org" "/home/steve/Project/Repo/org/robocup2016.org" "/home/steve/Project/Repo/org/robocup2017.org" "/home/steve/Project/Repo/org/robocup2018.org" "/home/steve/Project/Repo/org/ultraban.org" "/home/steve/Project/Repo/org/waseda.org"))
  '(package-selected-packages
-   '(markdown-preview-mode markdown-mode cask json-mode yaml-mode color-theme-sanityinc-tomorrow iregister vlf company-jedi jedi-core company-rtags flycheck-rtags ivy-rtags bm flx flx-ido ox-clip fireplace fill-column-indicator eyebrowse magit magithub which-key volatile-highlights visual-regexp-steroids string-inflection sphinx-doc smart-mode-line-powerline-theme rainbow-delimiters py-autopep8 org-bullets org-agenda-property org-ac org neotree irony-eldoc iedit highlight-indent-guides helm-swoop helm-rtags helm-gtags font-lock+ flycheck-pyflakes flycheck-irony flycheck-clangcheck flycheck-clang-tidy flycheck-clang-analyzer doom-themes company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex cmake-mode cmake-ide clang-format cheatsheet calfw-org calfw browse-kill-ring+ auto-complete-c-headers aggressive-indent aggressive-fill-paragraph 2048-game)))
+   '(flycheck-mypy py-isort rust-auto-use rust-mode toml-mode magit-find-file magit-gitflow magit-org-todos magit-todos activity-watch-mode python-black flycheck-rust talonscript-mode company-box use-package editorconfig el-get quelpa rustic lsp-pyright lsp-mode lsp-ui ein markdown-preview-mode markdown-mode cask json-mode yaml-mode color-theme-sanityinc-tomorrow iregister vlf company-jedi jedi-core company-rtags flycheck-rtags ivy-rtags bm flx flx-ido ox-clip fireplace fill-column-indicator eyebrowse magit magithub which-key volatile-highlights visual-regexp-steroids string-inflection sphinx-doc smart-mode-line-powerline-theme rainbow-delimiters py-autopep8 org-bullets org-agenda-property org-ac org neotree irony-eldoc iedit highlight-indent-guides helm-swoop helm-rtags helm-gtags font-lock+ flycheck-pyflakes flycheck-irony flycheck-clangcheck flycheck-clang-tidy flycheck-clang-analyzer doom-themes company-irony-c-headers company-irony company-c-headers company-bibtex company-auctex cmake-mode cmake-ide clang-format cheatsheet calfw-org calfw browse-kill-ring+ auto-complete-c-headers aggressive-indent aggressive-fill-paragraph 2048-game)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
